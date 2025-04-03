@@ -1,6 +1,10 @@
 #!/bin/bash
 # Script to manually clean up AWS resources if terraform destroy fails
 # This script requires AWS CLI v2 with the appropriate credentials configured
+# 
+# Note: This script works with the resources deployed by this project,
+# regardless of whether they were deployed using the modular or monolithic
+# Terraform configuration.
 
 echo "WARNING: This script will delete resources created by the Terraform configuration."
 echo "Make sure you have the appropriate credentials set up."

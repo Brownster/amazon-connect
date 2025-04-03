@@ -83,11 +83,29 @@ Amazon Connect → Kinesis Data Stream → Kinesis Firehose → S3 → AWS Glue 
 - IAM roles are configured with least privilege access to AWS services
 - Due to IAM policy size limits, permissions are split into two separate policies
 
+## Terraform Structure
+
+The Terraform configuration has been organized into logical modules:
+
+- **networking**: VPC, subnets, and internet connectivity
+- **connect**: Amazon Connect instance configuration
+- **data_pipeline**: Kinesis, Firehose, S3, and Glue resources
+- **analytics**: Athena workgroup and results storage
+- **grafana**: EC2 instance with Grafana
+
+For more details on the module structure, see [terraform/README.md](terraform/README.md).
+
 ## Cleanup
 
 To destroy all created resources:
 ```
+cd terraform
 terraform destroy
 ```
 
 Note: This will delete all data in the S3 buckets and other resources created by this project.
+
+If you encounter permission issues during cleanup, use the provided `cleanup.sh` script to manually delete resources:
+```
+./cleanup.sh
+```
