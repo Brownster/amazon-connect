@@ -5,7 +5,7 @@
 
 # Generate a random string to ensure unique S3 bucket names
 resource "random_string" "suffix" {
-  length  = 8
+  length  = var.random_suffix_length
   special = false
   lower   = true
   upper   = false
@@ -13,7 +13,7 @@ resource "random_string" "suffix" {
 
 # Create Athena workgroup for querying the data
 resource "aws_athena_workgroup" "connect_analytics" {
-  name = "connect-analytics"
+  name = var.athena_workgroup_name
   
   configuration {
     enforce_workgroup_configuration    = true
@@ -24,11 +24,21 @@ resource "aws_athena_workgroup" "connect_analytics" {
       output_location = "s3://${aws_s3_bucket.athena_results.bucket}/output/"
     }
   }
+  
+  tags = var.tags
 }
 
 # Create S3 bucket for Athena query results
 resource "aws_s3_bucket" "athena_results" {
-  bucket = "connect-analytics-athena-results-${random_string.suffix.result}"
+  bucket        = "${var.s3_bucket_prefix}-${random_string.suffix.result}"
+  force_destroy = var.s3_force_destroy
+  
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.s3_bucket_prefix}-${random_string.suffix.result}"
+    }
+  )
 }
 
 # Set S3 bucket ownership controls for Athena results

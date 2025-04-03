@@ -10,10 +10,12 @@ resource "aws_connect_instance" "instance" {
   outbound_calls_enabled         = true                 # Enable outbound calls
   early_media_enabled            = true                 # Allow audio before call is connected
   auto_resolve_best_voices_enabled = true               # Use best voice based on caller location
-  contact_flow_logs_enabled      = true                 # Enable logging of contact flows
-  contact_lens_enabled           = true                 # Enable Contact Lens analytics
-  instance_alias                 = "thebrowns"          # Name for the Connect instance
-  multi_party_conference_enabled = true                 # Enable multi-party calls
+  contact_flow_logs_enabled      = var.enable_contact_flow_logs  # Enable logging of contact flows
+  contact_lens_enabled           = var.enable_contact_lens       # Enable Contact Lens analytics
+  instance_alias                 = var.instance_alias            # Name for the Connect instance
+  multi_party_conference_enabled = true                          # Enable multi-party calls
+  
+  tags = var.tags
 }
 
 # IAM Role to allow Amazon Connect to write to the Kinesis stream

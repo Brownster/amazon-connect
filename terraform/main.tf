@@ -7,7 +7,7 @@
 
 # Define the AWS provider and region
 provider "aws" {
-  region = "eu-west-2"
+  region = var.aws_region
   # Uncomment and fill in your credentials below
   # access_key = "your_access_key"
   # secret_key = "your_secret_key"
@@ -21,6 +21,20 @@ provider "aws" {
 # ===================================================================
 module "networking" {
   source = "./networking"
+  
+  # Pass variables to the networking module
+  vpc_cidr            = "10.0.0.0/16"
+  public_subnet_cidr  = "10.0.1.0/24"
+  private_subnet_cidr = "10.0.2.0/24"
+  availability_zone   = "eu-west-2a"
+  
+  # Pass tags with module-specific prefix
+  tags = merge(
+    var.tags,
+    {
+      Module = "Networking"
+    }
+  )
 }
 
 # ===================================================================
@@ -28,6 +42,24 @@ module "networking" {
 # ===================================================================
 module "data_pipeline" {
   source = "./data_pipeline"
+  
+  # Pass Kinesis configuration
+  kinesis_stream_name     = "${var.project_name}-ctr-stream"
+  kinesis_shard_count     = var.kinesis_shard_count
+  kinesis_retention_period = var.kinesis_retention_period
+  
+  # Pass Firehose configuration
+  firehose_name           = "${var.project_name}-delivery-stream"
+  firehose_buffer_size    = var.firehose_buffer_size
+  firehose_buffer_interval = var.firehose_buffer_interval
+  
+  # Pass tags with module-specific prefix
+  tags = merge(
+    var.tags,
+    {
+      Module = "DataPipeline"
+    }
+  )
 }
 
 # ===================================================================
@@ -38,6 +70,19 @@ module "connect" {
   
   # Pass data pipeline outputs to connect module
   kinesis_stream_arn = module.data_pipeline.kinesis_stream_arn
+  
+  # Pass configuration variables
+  instance_alias         = var.instance_alias
+  enable_contact_lens    = true
+  enable_contact_flow_logs = true
+  
+  # Pass tags with module-specific prefix
+  tags = merge(
+    var.tags,
+    {
+      Module = "Connect"
+    }
+  )
 }
 
 # ===================================================================
@@ -45,6 +90,18 @@ module "connect" {
 # ===================================================================
 module "analytics" {
   source = "./analytics"
+  
+  # Pass analytics configuration
+  athena_workgroup_name = "${var.project_name}-workgroup"
+  s3_bucket_prefix = "${var.project_name}-athena-results"
+  
+  # Pass tags with module-specific prefix
+  tags = merge(
+    var.tags,
+    {
+      Module = "Analytics"
+    }
+  )
 }
 
 # ===================================================================
@@ -59,6 +116,18 @@ module "grafana" {
   
   # Pass analytics outputs to grafana module
   athena_results_bucket = module.analytics.athena_results_bucket
+  
+  # Pass instance configuration
+  instance_type = var.instance_type
+  ssh_key_path = var.ssh_key_path
+  
+  # Pass tags with module-specific prefix
+  tags = merge(
+    var.tags,
+    {
+      Module = "Grafana"
+    }
+  )
 }
 
 # ===================================================================

@@ -5,7 +5,7 @@
 
 # Generate a random string to ensure unique S3 bucket names
 resource "random_string" "suffix" {
-  length  = 8
+  length  = var.random_suffix_length
   special = false
   lower   = true
   upper   = false
@@ -13,18 +13,29 @@ resource "random_string" "suffix" {
 
 # Create a Kinesis Data Stream to receive Contact Trace Records (CTR) from Connect
 resource "aws_kinesis_stream" "connect_ctr" {
-  name             = "connect-ctr-stream"
-  shard_count      = 1                # Number of shards (throughput units)
-  retention_period = 24               # Data retention period in hours
+  name             = var.kinesis_stream_name
+  shard_count      = var.kinesis_shard_count      # Number of shards (throughput units)
+  retention_period = var.kinesis_retention_period # Data retention period in hours
   
-  tags = {
-    Name = "connect-ctr-stream"
-  }
+  tags = merge(
+    var.tags,
+    {
+      Name = var.kinesis_stream_name
+    }
+  )
 }
 
 # Create S3 bucket to store Connect CTR data from Firehose
 resource "aws_s3_bucket" "connect_ctr_data" {
-  bucket = "connect-ctr-data-${random_string.suffix.result}"  # Generate unique bucket name
+  bucket        = "${var.s3_bucket_prefix}-${random_string.suffix.result}"  # Generate unique bucket name
+  force_destroy = var.s3_force_destroy
+  
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.s3_bucket_prefix}-${random_string.suffix.result}"
+    }
+  )
 }
 
 # Set S3 bucket ownership controls to avoid permission issues
@@ -44,7 +55,7 @@ resource "aws_s3_bucket_acl" "connect_ctr_data" {
 
 # IAM Role for Kinesis Firehose delivery stream
 resource "aws_iam_role" "firehose_role" {
-  name = "firehose-role"
+  name = var.firehose_role_name
   
   # Allow Firehose service to assume this role
   assume_role_policy = jsonencode({
@@ -59,11 +70,13 @@ resource "aws_iam_role" "firehose_role" {
       }
     ]
   })
+  
+  tags = var.tags
 }
 
 # IAM Policy for Firehose to read from Kinesis and write to S3
 resource "aws_iam_role_policy" "firehose_role" {
-  name = "firehose-policy"
+  name = var.firehose_policy_name
   role = aws_iam_role.firehose_role.id
   
   policy = jsonencode({
@@ -100,7 +113,7 @@ resource "aws_iam_role_policy" "firehose_role" {
 
 # Create Kinesis Firehose delivery stream to move data from Kinesis to S3
 resource "aws_kinesis_firehose_delivery_stream" "connect_ctr" {
-  name        = "connect-ctr-delivery-stream"
+  name        = var.firehose_name
   destination = "extended_s3"  # Use S3 as destination
   
   # Configure Kinesis as the source
@@ -113,26 +126,35 @@ resource "aws_kinesis_firehose_delivery_stream" "connect_ctr" {
   extended_s3_configuration {
     role_arn           = aws_iam_role.firehose_role.arn
     bucket_arn         = aws_s3_bucket.connect_ctr_data.arn
-    prefix             = "connect-ctr-data/"  # S3 prefix for stored data
+    prefix             = var.s3_prefix  # S3 prefix for stored data
     
-    buffering_size     = 5  # Buffer size in MB
-    buffering_interval = 60 # Buffer interval in seconds
+    buffering_size     = var.firehose_buffer_size  # Buffer size in MB
+    buffering_interval = var.firehose_buffer_interval # Buffer interval in seconds
     
     # Disable processing configuration to avoid validation errors
     processing_configuration {
       enabled = false
     }
   }
+  
+  tags = merge(
+    var.tags,
+    {
+      Name = var.firehose_name
+    }
+  )
 }
 
 # Create a Glue Catalog Database to store metadata about our data
 resource "aws_glue_catalog_database" "connect_db" {
-  name = "connect_ctr_database"  # Database name for querying with Athena
+  name = var.glue_database_name  # Database name for querying with Athena
+  
+  tags = var.tags
 }
 
 # IAM Role for Glue Crawler to access S3 and catalog data
 resource "aws_iam_role" "glue_crawler" {
-  name = "glue-crawler-role"
+  name = var.glue_crawler_role_name
   
   # Allow Glue service to assume this role
   assume_role_policy = jsonencode({
@@ -147,6 +169,8 @@ resource "aws_iam_role" "glue_crawler" {
       }
     ]
   })
+  
+  tags = var.tags
 }
 
 # Attach AWS managed policy for Glue service roles
@@ -157,7 +181,7 @@ resource "aws_iam_role_policy_attachment" "glue_service" {
 
 # IAM Policy for Glue Crawler to access S3 data
 resource "aws_iam_role_policy" "glue_s3_access" {
-  name = "glue-s3-access-policy"
+  name = var.glue_s3_policy_name
   role = aws_iam_role.glue_crawler.id
   
   policy = jsonencode({
@@ -182,14 +206,21 @@ resource "aws_iam_role_policy" "glue_s3_access" {
 
 # Create Glue Crawler to discover and catalog schema of CTR data in S3
 resource "aws_glue_crawler" "connect_ctr" {
-  name          = "connect-ctr-crawler"
+  name          = var.glue_crawler_name
   role          = aws_iam_role.glue_crawler.arn
   database_name = aws_glue_catalog_database.connect_db.name
   
   # Set S3 target for the crawler
   s3_target {
-    path = "s3://${aws_s3_bucket.connect_ctr_data.bucket}/connect-ctr-data/"
+    path = "s3://${aws_s3_bucket.connect_ctr_data.bucket}/${var.s3_prefix}"
   }
   
-  schedule = "cron(0 */3 * * ? *)" # Run every 3 hours
+  schedule = var.glue_crawler_schedule # Configurable schedule
+  
+  tags = merge(
+    var.tags,
+    {
+      Name = var.glue_crawler_name
+    }
+  )
 }
