@@ -13,16 +13,26 @@ It also provides a Python script to generate test CTR data for development and t
 
 ## Setup Instructions
 
-1. Generate SSH key for Grafana instance:
+1. Run the initialization script to check dependencies and set up the environment:
    ```
-   ./scripts/generate_ssh_key.sh
+   ./scripts/init.sh
    ```
+   This script will:
+   - Check for required tools (AWS CLI, Terraform, Python)
+   - Install necessary Python dependencies
+   - Generate SSH keys for the Grafana instance
+   - Validate the Terraform configuration
+   - Guide you through the remaining setup steps
 
-2. Configure AWS credentials:
+2. Configure AWS credentials (if not already done):
    ```
    export AWS_ACCESS_KEY_ID="your_access_key"
    export AWS_SECRET_ACCESS_KEY="your_secret_key"
    export AWS_REGION="eu-west-2"
+   ```
+   Or use the AWS CLI:
+   ```
+   aws configure
    ```
    
 3. Set up IAM permissions:
@@ -48,7 +58,16 @@ It also provides a Python script to generate test CTR data for development and t
    - Login with the default credentials (admin/admin)
    - You'll be prompted to change the password on first login
 
-7. Configure Athena data source in Grafana:
+7. (Optional) SSH into the Grafana instance:
+   - Use the SSH command from the Terraform output:
+     ```
+     ssh -i grafana-key ec2-user@<grafana_public_ip>
+     ```
+   - This gives you direct access to manage the Docker containers and configure Grafana
+   - You can view logs with: `docker logs grafana`
+   - You can restart Grafana with: `docker restart grafana`
+
+8. Configure Athena data source in Grafana:
    - Detailed instructions are in [docs/grafana_athena_setup.md](docs/grafana_athena_setup.md)
    - Add a new data source and select "Amazon Athena"
    - Use the following settings:
@@ -59,9 +78,9 @@ It also provides a Python script to generate test CTR data for development and t
      - Workgroup: connect-analytics
      - Output Location: s3://connect-analytics-athena-results-xxx/output/ (from Terraform output)
 
-8. Create dashboards to visualize your Amazon Connect data
+9. Create dashboards to visualize your Amazon Connect data
 
-9. Generate test CTR data:
+10. Generate test CTR data:
    - See [docs/setup_test_data.md](docs/setup_test_data.md) for detailed instructions
    - Run the provided Python script to send test data to Kinesis:
      ```bash
