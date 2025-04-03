@@ -126,7 +126,12 @@ resource "aws_kinesis_firehose_delivery_stream" "connect_ctr" {
   extended_s3_configuration {
     role_arn           = aws_iam_role.firehose_role.arn
     bucket_arn         = aws_s3_bucket.connect_ctr_data.arn
-    prefix             = var.s3_prefix  # S3 prefix for stored data
+    
+    # Use time-based partitioning if enabled, otherwise use simple prefix
+    prefix             = var.enable_s3_partitioning ? "${var.s3_prefix}year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/" : var.s3_prefix
+    
+    # Add error output prefix for better debugging
+    error_output_prefix = var.enable_s3_partitioning ? "${var.s3_prefix_error}!{firehose:error-output-type}/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/" : "${var.s3_prefix_error}!{firehose:error-output-type}/"
     
     buffering_size     = var.firehose_buffer_size  # Buffer size in MB
     buffering_interval = var.firehose_buffer_interval # Buffer interval in seconds
@@ -216,6 +221,23 @@ resource "aws_glue_crawler" "connect_ctr" {
   }
   
   schedule = var.glue_crawler_schedule # Configurable schedule
+  
+  # Configure the crawler to handle partitioning
+  configuration = var.enable_s3_partitioning ? jsonencode({
+    Version = 1.0
+    CrawlerOutput = {
+      Partitions = { AddOrUpdateBehavior = "InheritFromTable" }
+      Tables = { AddOrUpdateBehavior = "MergeNewColumns" }
+    }
+    # Configure to understand the time-based partition structure
+    Grouping = { TableGroupingPolicy = "CombineCompatibleSchemas" }
+  }) : null
+  
+  # Set table level configuration
+  schema_change_policy {
+    delete_behavior = "LOG"
+    update_behavior = "UPDATE_IN_DATABASE"
+  }
   
   tags = merge(
     var.tags,

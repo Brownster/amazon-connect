@@ -13,9 +13,11 @@ REGION = "eu-west-2"               # Update with your region
 RECORD_COUNT = 100                 # Number of records to generate
 BATCH_SIZE = 25                    # Records per batch
 DELAY_BETWEEN_BATCHES = 1          # Seconds between batches
+VALIDATE_STREAM = True             # Validate that stream exists before sending data
 
 # Initialize AWS clients
 kinesis_client = boto3.client('kinesis', region_name=REGION)
+iam_client = boto3.client('iam', region_name=REGION)
 
 # Names for simulation
 first_names = ["James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda", "William", "Elizabeth"]
@@ -167,9 +169,30 @@ def send_to_kinesis(records):
         print(f"Error sending records to Kinesis: {e}")
         return None
 
+# Validate stream exists
+def validate_stream():
+    """Check if the Kinesis stream exists before sending data."""
+    try:
+        response = kinesis_client.describe_stream(StreamName=STREAM_NAME)
+        print(f"Stream {STREAM_NAME} exists and is {response['StreamDescription']['StreamStatus']}")
+        return True
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ResourceNotFoundException':
+            print(f"ERROR: Stream {STREAM_NAME} does not exist. Please create it first using Terraform.")
+            return False
+        else:
+            print(f"Error checking stream: {e}")
+            return False
+
 # Main execution
 def main():
+    if VALIDATE_STREAM:
+        if not validate_stream():
+            print("Exiting due to stream validation failure.")
+            return
+    
     print(f"Generating {RECORD_COUNT} CTR records for stream {STREAM_NAME}")
+    print(f"NOTE: Data will be partitioned by year/month/day/hour in S3 for efficient querying")
     
     # Generate and send records in batches
     for i in range(0, RECORD_COUNT, BATCH_SIZE):
@@ -184,6 +207,11 @@ def main():
             time.sleep(DELAY_BETWEEN_BATCHES)
     
     print(f"Completed sending {RECORD_COUNT} CTR records")
+    print("\nNext steps:")
+    print("1. Wait a few minutes for Firehose to deliver data to S3")
+    print("2. Run the Glue crawler to catalog the data")
+    print("3. Query the data with Athena")
+    print("4. View dashboards in Grafana")
 
 if __name__ == "__main__":
     main()

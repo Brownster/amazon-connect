@@ -39,9 +39,21 @@ variable "firehose_buffer_interval" {
 }
 
 variable "s3_prefix" {
-  description = "S3 prefix for Firehose delivery"
+  description = "Base S3 prefix for Firehose delivery"
   type        = string
   default     = "connect-ctr-data/"
+}
+
+variable "s3_prefix_error" {
+  description = "S3 prefix for Firehose delivery errors"
+  type        = string
+  default     = "connect-ctr-data-errors/"
+}
+
+variable "enable_s3_partitioning" {
+  description = "Enable time-based partitioning for S3 data"
+  type        = bool
+  default     = true
 }
 
 variable "glue_database_name" {
