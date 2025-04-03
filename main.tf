@@ -264,6 +264,9 @@ resource "aws_kinesis_firehose_delivery_stream" "connect_ctr" {
     bucket_arn      = aws_s3_bucket.connect_ctr_data.arn
     prefix          = "connect-ctr/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/"
     
+    buffering_size     = 5
+    buffering_interval = 60
+    
     processing_configuration {
       enabled = true
       
