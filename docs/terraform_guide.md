@@ -184,16 +184,93 @@ resource "aws_kinesis_firehose_delivery_stream" "connect_ctr" {
   name        = var.firehose_name
   destination = "extended_s3"
   
-  # Configuration for Kinesis source and S3 destination...
+  # Configuration for Kinesis source and S3 destination with optimized partitioning
+  extended_s3_configuration {
+    # Time-based partitioning for improved query performance
+    prefix = "${var.s3_prefix}year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/"
+    
+    # Error handling with separate partition structure
+    error_output_prefix = "${var.s3_prefix_error}!{firehose:error-output-type}/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/"
+  }
 }
 ```
 
 Key components:
 - **Kinesis Data Stream**: Receives real-time CTR data
-- **Firehose Delivery Stream**: Buffers and delivers data to S3
-- **S3 Bucket**: Stores the CTR data
-- **Glue Crawler**: Discovers the schema of the data
-- **Glue Catalog Database**: Stores metadata about the data
+- **Firehose Delivery Stream**: Buffers and delivers data to S3 with time-based partitioning
+- **S3 Bucket**: Stores the CTR data in an optimized partition structure
+- **Glue Crawler**: Discovers the schema and automatically recognizes partition structure
+- **Glue Catalog Database**: Stores metadata about the data, including partition information
+
+The Glue Crawler is configured to handle the partitioned data structure:
+
+```hcl
+resource "aws_glue_crawler" "connect_ctr" {
+  # Basic configuration...
+  
+  # Configuration for partitioning
+  configuration = var.enable_s3_partitioning ? jsonencode({
+    Version = 1.0
+    CrawlerOutput = {
+      Partitions = { AddOrUpdateBehavior = "InheritFromTable" }
+    }
+    # Configure to understand the time-based partition structure
+    Grouping = { TableGroupingPolicy = "CombineCompatibleSchemas" }
+  }) : null
+  
+  # Schema change policy
+  schema_change_policy {
+    delete_behavior = "LOG"
+    update_behavior = "UPDATE_IN_DATABASE"
+  }
+}
+```
+
+This configuration allows the crawler to automatically detect and register the partitions in the Glue Data Catalog.
+
+### Optimized S3 Partitioning
+
+The data pipeline implements time-based partitioning for S3 data:
+
+```
+connect-ctr-data/
+├── year=2023/
+│   └── month=12/
+│       └── day=15/
+│           └── hour=14/
+│               └── data files
+```
+
+This partitioning structure:
+- Improves Athena query performance by allowing partition pruning
+- Reduces query costs by scanning only relevant data
+- Simplifies data lifecycle management with clear time boundaries
+
+### `data_pipeline/variables.tf`
+
+Key partitioning variables:
+
+```hcl
+variable "s3_prefix" {
+  description = "Base S3 prefix for Firehose delivery"
+  type        = string
+  default     = "connect-ctr-data/"
+}
+
+variable "s3_prefix_error" {
+  description = "S3 prefix for Firehose delivery errors"
+  type        = string
+  default     = "connect-ctr-data-errors/"
+}
+
+variable "enable_s3_partitioning" {
+  description = "Enable time-based partitioning for S3 data"
+  type        = bool
+  default     = true
+}
+```
+
+These variables control the S3 data partitioning behavior and can be customized for different environments.
 
 ## Module: analytics
 
@@ -218,6 +295,34 @@ resource "aws_athena_workgroup" "connect_analytics" {
 Key components:
 - **Athena Workgroup**: Enables queries on CTR data
 - **S3 Bucket**: Stores Athena query results
+
+### Querying Partitioned Data
+
+The time-based partitioning scheme allows for efficient queries in Athena:
+
+```sql
+-- Simple query (scans all data):
+SELECT * 
+FROM connect_ctr_database.connect_ctr_data 
+LIMIT 10;
+
+-- Efficient query using partitions (scans less data):
+SELECT * 
+FROM connect_ctr_database.connect_ctr_data 
+WHERE year='2023' AND month='12' AND day='15' 
+LIMIT 10;
+
+-- Time range query:
+SELECT * 
+FROM connect_ctr_database.connect_ctr_data 
+WHERE 
+  (year='2023' AND month='12' AND day='15') OR
+  (year='2023' AND month='12' AND day='16')
+ORDER BY initializationtimestamp 
+LIMIT 100;
+```
+
+These partition-aware queries significantly improve performance and reduce cost by scanning only the data you need.
 
 ## Module: grafana
 
