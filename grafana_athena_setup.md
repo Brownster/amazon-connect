@@ -38,7 +38,7 @@ If the plugin isn't available in the UI or you prefer command-line installation:
 3. Search for and select "Athena"
 4. Configure the following settings:
 
-   **Auth Provider**: Select "EC2 Instance IAM Role (same-origin)" - this uses the IAM role attached to your EC2 instance
+   **Auth Provider**: Select "AWS SDK Default" (this uses the IAM role attached to your EC2 instance)
 
    **Default Region**: `eu-west-2` (or your AWS region)
    
@@ -128,6 +128,16 @@ GROUP BY Attributes.Resolution
 1. Verify the IAM role has the correct permissions
 2. Check that your VPC security groups allow outbound traffic
 3. Ensure the workgroup and database names are correct
+
+### Error: User is not authorized to perform sts:AssumeRole
+If you get an error like: "User: arn:aws:sts::XXXX:assumed-role/grafana-instance-role/i-XXXX is not authorized to perform: sts:AssumeRole"
+
+1. Try changing the Auth Provider from "EC2 Instance IAM Role" to "AWS SDK Default"
+2. If that doesn't work, SSH into the EC2 instance and verify the IAM role configuration:
+   ```bash
+   aws sts get-caller-identity
+   ```
+3. Ensure the IAM role has permission to access Athena and S3 resources
 
 ### No data in queries
 1. Verify data is flowing through your pipeline:

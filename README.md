@@ -50,7 +50,7 @@ It also provides a Python script to generate test CTR data for development and t
    - Detailed instructions are in [grafana_athena_setup.md](grafana_athena_setup.md)
    - Add a new data source and select "Amazon Athena"
    - Use the following settings:
-     - Auth Provider: EC2 Instance IAM Role (same-origin)
+     - Auth Provider: AWS SDK Default
      - Default Region: eu-west-2
      - Catalog: AwsDataCatalog
      - Database: connect_ctr_database (from Terraform output)
