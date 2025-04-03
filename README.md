@@ -31,6 +31,7 @@ It also provides a Python script to generate test CTR data for development and t
 
 4. Initialize and apply Terraform:
    ```
+   cd terraform
    terraform init
    terraform plan
    terraform apply
