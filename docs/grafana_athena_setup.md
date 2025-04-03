@@ -79,14 +79,59 @@ If the plugin isn't available in the UI or you prefer command-line installation:
 6. Add additional panels as needed
 7. Save the dashboard with a meaningful name
 
-## 5. Sample Queries for Amazon Connect CTR Data
+## 5. Understanding and Using Partitioned Data
 
-### Contact Volume by Channel
+The CTR data is stored using a time-based partitioning scheme for improved performance:
+
+```
+connect-ctr-data/
+├── year=2023/
+│   └── month=12/
+│       └── day=15/
+│           └── hour=14/
+│               └── data files
+```
+
+This structure allows for much more efficient queries when you include partition columns in your WHERE clause. Athena will only scan the partitions that match your criteria, significantly reducing query cost and improving performance.
+
+### Using Partitions in Grafana Queries
+
+When creating dashboards in Grafana that cover specific time periods, always include the partition columns in your queries. For example:
+
+```sql
+-- This query is EFFICIENT (uses partitions)
+SELECT * 
+FROM connect_ctr_database.connect_ctr_data 
+WHERE year='2023' AND month='12' AND day='15'
+LIMIT 100;
+```
+
+### Time Variables in Grafana
+
+Grafana provides built-in time range variables that can be used to dynamically filter by partitions:
+
+```sql
+-- Using Grafana's time variables with partitions
+SELECT *
+FROM connect_ctr_database.connect_ctr_data
+WHERE 
+  year = CAST(DATE_FORMAT($__timeFrom, '%Y') AS VARCHAR) AND
+  month = CAST(DATE_FORMAT($__timeFrom, '%m') AS VARCHAR) AND
+  day BETWEEN CAST(DATE_FORMAT($__timeFrom, '%d') AS VARCHAR) AND CAST(DATE_FORMAT($__timeTo, '%d') AS VARCHAR)
+```
+
+## 6. Sample Queries for Amazon Connect CTR Data
+
+### Contact Volume by Channel (Partition-Optimized)
 ```sql
 SELECT 
   Channel, 
   COUNT(*) as ContactCount
 FROM connect_ctr_database.connect_ctr_data
+WHERE 
+  year = CAST(DATE_FORMAT($__timeFrom, '%Y') AS VARCHAR) AND
+  month = CAST(DATE_FORMAT($__timeFrom, '%m') AS VARCHAR) AND
+  day BETWEEN CAST(DATE_FORMAT($__timeFrom, '%d') AS VARCHAR) AND CAST(DATE_FORMAT($__timeTo, '%d') AS VARCHAR)
 GROUP BY Channel
 ```
 
@@ -96,6 +141,11 @@ SELECT
   Queue.QueueName, 
   AVG(Queue.Duration) as AvgQueueDuration
 FROM connect_ctr_database.connect_ctr_data
+WHERE 
+  -- Add time partition filtering
+  year = CAST(DATE_FORMAT($__timeFrom, '%Y') AS VARCHAR) AND
+  month = CAST(DATE_FORMAT($__timeFrom, '%m') AS VARCHAR) AND
+  day BETWEEN CAST(DATE_FORMAT($__timeFrom, '%d') AS VARCHAR) AND CAST(DATE_FORMAT($__timeTo, '%d') AS VARCHAR)
 GROUP BY Queue.QueueName
 ORDER BY AvgQueueDuration DESC
 ```
@@ -108,6 +158,11 @@ SELECT
   COUNT(*) as ContactCount,
   AVG(AgentInfo.AgentInteractionDuration) as AvgHandleTime
 FROM connect_ctr_database.connect_ctr_data
+WHERE 
+  -- Add time partition filtering
+  year = CAST(DATE_FORMAT($__timeFrom, '%Y') AS VARCHAR) AND
+  month = CAST(DATE_FORMAT($__timeFrom, '%m') AS VARCHAR) AND
+  day BETWEEN CAST(DATE_FORMAT($__timeFrom, '%d') AS VARCHAR) AND CAST(DATE_FORMAT($__timeTo, '%d') AS VARCHAR)
 GROUP BY AgentInfo.AgentId, Attributes.AgentName
 ORDER BY ContactCount DESC
 ```
@@ -119,7 +174,26 @@ SELECT
   COUNT(*) as ContactCount,
   ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 1) as Percentage
 FROM connect_ctr_database.connect_ctr_data
+WHERE 
+  -- Add time partition filtering
+  year = CAST(DATE_FORMAT($__timeFrom, '%Y') AS VARCHAR) AND
+  month = CAST(DATE_FORMAT($__timeFrom, '%m') AS VARCHAR) AND
+  day BETWEEN CAST(DATE_FORMAT($__timeFrom, '%d') AS VARCHAR) AND CAST(DATE_FORMAT($__timeTo, '%d') AS VARCHAR)
 GROUP BY Attributes.Resolution
+```
+
+### Hourly Contact Volume Trend
+```sql
+SELECT 
+  PARSE_DATETIME(CONCAT(year, '-', month, '-', day, ' ', hour, ':00:00'), 'yyyy-MM-dd HH:mm:ss') as hourly_timestamp,
+  COUNT(*) as contact_count
+FROM connect_ctr_database.connect_ctr_data
+WHERE 
+  year = CAST(DATE_FORMAT($__timeFrom, '%Y') AS VARCHAR) AND
+  month = CAST(DATE_FORMAT($__timeFrom, '%m') AS VARCHAR) AND
+  day BETWEEN CAST(DATE_FORMAT($__timeFrom, '%d') AS VARCHAR) AND CAST(DATE_FORMAT($__timeTo, '%d') AS VARCHAR)
+GROUP BY year, month, day, hour
+ORDER BY hourly_timestamp
 ```
 
 ## Troubleshooting
@@ -141,9 +215,23 @@ If you get an error like: "User: arn:aws:sts::XXXX:assumed-role/grafana-instance
 
 ### No data in queries
 1. Verify data is flowing through your pipeline:
-   - Check your S3 bucket for data
+   - Check your S3 bucket for data and confirm the partition structure
    - Run the Glue crawler manually if needed
    - Try querying directly in the Athena console
+
+### Slow Queries or High Costs
+1. Check if your queries are using partitions:
+   - Always include partition columns (year, month, day) in your WHERE clauses
+   - Use Grafana's time variables to dynamically filter partitions
+   - In Athena console, check the "Data scanned" metric after running queries
+   - Queries not using partitions might scan all data, resulting in high costs
+
+### Partition-related Issues
+1. If partitions aren't recognized:
+   - Check that the Glue crawler has run recently
+   - Verify the partition structure in S3 follows the correct format
+   - Try running the query directly in Athena to identify partition issues
+   - Use the `MSCK REPAIR TABLE connect_ctr_database.connect_ctr_data` command in Athena
 
 ### Plugin not installing
 1. Check Grafana logs:
@@ -151,3 +239,10 @@ If you get an error like: "User: arn:aws:sts::XXXX:assumed-role/grafana-instance
    docker exec -it grafana tail -f /var/log/grafana/grafana.log
    ```
 2. Ensure Grafana has internet access to download plugins
+
+### Dashboard Refresh Performance
+1. If dashboards are slow to refresh:
+   - Reduce the time range to query fewer partitions
+   - Optimize your SQL queries with appropriate WHERE clauses
+   - Consider creating dashboards for specific time periods instead of all-time views
+   - Use daily or weekly aggregation tables for long-term trends
