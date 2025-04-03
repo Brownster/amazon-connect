@@ -24,7 +24,7 @@ This document explains how to generate test Contact Trace Record (CTR) data for 
 
 4. Replace the AWS Account ID and Instance ID with your actual values:
    ```python
-   "AWSAccountId": "891612549865",  # Your AWS account ID
+   "AWSAccountId": "XXXXXXXXXXXX",  # Your AWS account ID
    "InstanceId": "6e4f36f4-1b28-4725-a407-79a31c76a9b8",  # Your Connect instance ID
    ```
 
