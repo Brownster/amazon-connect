@@ -27,3 +27,4 @@ terraform.rc
 
 # Sensitive files
 iam-policy.json
+iam-policy-part*.json
