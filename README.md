@@ -47,6 +47,7 @@ It also provides a Python script to generate test CTR data for development and t
    - You'll be prompted to change the password on first login
 
 7. Configure Athena data source in Grafana:
+   - Detailed instructions are in [grafana_athena_setup.md](grafana_athena_setup.md)
    - Add a new data source and select "Amazon Athena"
    - Use the following settings:
      - Auth Provider: EC2 Instance IAM Role (same-origin)

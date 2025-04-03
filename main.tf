@@ -504,6 +504,15 @@ resource "aws_instance" "grafana" {
     
     cd /home/ec2-user/grafana
     docker-compose up -d
+    
+    # Wait for Grafana to start
+    sleep 10
+    
+    # Install Athena plugin directly
+    docker exec -it grafana grafana-cli plugins install grafana-athena-datasource
+    
+    # Restart Grafana to apply plugin
+    docker-compose restart
   EOF
   
   tags = {
