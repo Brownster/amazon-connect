@@ -267,16 +267,9 @@ resource "aws_kinesis_firehose_delivery_stream" "connect_ctr" {
     buffering_size     = 5
     buffering_interval = 60
     
+    # Disable processing configuration for now
     processing_configuration {
-      enabled = true
-      
-      processors {
-        type = "AppendDelimiterToRecord"
-        parameters {
-          parameter_name  = "Delimiter"
-          parameter_value = "\n"
-        }
-      }
+      enabled = false
     }
   }
 }
