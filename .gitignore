@@ -29,3 +29,7 @@ terraform.rc
 /iam-policy.json
 /iam-policy-part*.json
 # But allow example files in iam-policies directory
+
+# Init command
+.init_output.log
+init
