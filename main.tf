@@ -74,6 +74,9 @@ resource "random_string" "suffix" {
   upper   = false
 }
 
+# Get current AWS account ID
+data "aws_caller_identity" "current" {}
+
 # Amazon Connect Instance
 resource "aws_connect_instance" "instance" {
   identity_management_type       = "CONNECT_MANAGED"
@@ -260,14 +263,14 @@ resource "aws_kinesis_firehose_delivery_stream" "connect_ctr" {
   }
   
   extended_s3_configuration {
-    role_arn        = aws_iam_role.firehose_role.arn
-    bucket_arn      = aws_s3_bucket.connect_ctr_data.arn
-    prefix          = "connect-ctr/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/hour=!{timestamp:HH}/"
+    role_arn           = aws_iam_role.firehose_role.arn
+    bucket_arn         = aws_s3_bucket.connect_ctr_data.arn
+    prefix             = "connect-ctr-data/"
     
     buffering_size     = 5
     buffering_interval = 60
     
-    # Disable processing configuration for now
+    # Disable processing configuration
     processing_configuration {
       enabled = false
     }
@@ -306,7 +309,7 @@ resource "aws_glue_crawler" "connect_ctr" {
   database_name = aws_glue_catalog_database.connect_db.name
   
   s3_target {
-    path = "s3://${aws_s3_bucket.connect_ctr_data.bucket}/connect-ctr/"
+    path = "s3://${aws_s3_bucket.connect_ctr_data.bucket}/connect-ctr-data/"
   }
   
   schedule = "cron(0 */3 * * ? *)" # Run every 3 hours
