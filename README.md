@@ -26,7 +26,8 @@ It also provides a Python script to generate test CTR data for development and t
    ```
    
 3. Set up IAM permissions:
-   - Use the provided `iam-policy-part1.json` and `iam-policy-part2.json` files to create two IAM policies
+   - Use the example policies in the `iam-policies/` directory to create two IAM policies
+   - See [iam-policies/README.md](iam-policies/README.md) for detailed instructions
    - Attach both policies to the IAM user or role used for Terraform operations
 
 4. Initialize and apply Terraform:

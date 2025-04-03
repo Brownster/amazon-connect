@@ -1,0 +1,108 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowKinesisAndFirehoseAccess",
+      "Effect": "Allow",
+      "Action": [
+        "kinesis:CreateStream",
+        "kinesis:DeleteStream",
+        "kinesis:DescribeStream",
+        "kinesis:DescribeStreamSummary",
+        "kinesis:ListStreams",
+        "kinesis:UpdateShardCount",
+        "kinesis:ListShards",
+        "kinesis:MergeShards",
+        "kinesis:SplitShard",
+        "kinesis:AddTagsToStream",
+        "kinesis:ListTagsForStream",
+        "kinesis:RemoveTagsFromStream",
+        "firehose:CreateDeliveryStream",
+        "firehose:DeleteDeliveryStream",
+        "firehose:DescribeDeliveryStream",
+        "firehose:ListDeliveryStreams",
+        "firehose:UpdateDestination",
+        "firehose:TagDeliveryStream",
+        "firehose:UntagDeliveryStream",
+        "firehose:ListTagsForDeliveryStream"
+      ],
+      "Resource": [
+        "arn:aws:kinesis:*:*:stream/connect-ctr-stream",
+        "arn:aws:firehose:*:*:deliverystream/connect-ctr-delivery-stream"
+      ]
+    },
+    {
+      "Sid": "AllowGlueAccess",
+      "Effect": "Allow",
+      "Action": [
+        "glue:CreateDatabase",
+        "glue:DeleteDatabase",
+        "glue:GetDatabase",
+        "glue:GetDatabases",
+        "glue:UpdateDatabase",
+        "glue:CreateCrawler",
+        "glue:DeleteCrawler",
+        "glue:GetCrawler",
+        "glue:GetCrawlers",
+        "glue:StartCrawler",
+        "glue:StopCrawler",
+        "glue:UpdateCrawler",
+        "glue:BatchGetCrawlers",
+        "glue:CreateTable",
+        "glue:DeleteTable",
+        "glue:BatchDeleteTable",
+        "glue:UpdateTable",
+        "glue:GetTable",
+        "glue:GetTables",
+        "glue:GetTags",
+        "glue:TagResource",
+        "glue:UntagResource"
+      ],
+      "Resource": [
+        "arn:aws:glue:*:*:catalog",
+        "arn:aws:glue:*:*:database/connect_ctr_database",
+        "arn:aws:glue:*:*:table/connect_ctr_database/*",
+        "arn:aws:glue:*:*:userDefinedFunction/connect_ctr_database/*",
+        "arn:aws:glue:*:*:crawler/connect-ctr-crawler"
+      ]
+    },
+    {
+      "Sid": "AllowAthenaAccess",
+      "Effect": "Allow",
+      "Action": [
+        "athena:CreateWorkGroup",
+        "athena:DeleteWorkGroup",
+        "athena:GetWorkGroup",
+        "athena:ListWorkGroups",
+        "athena:UpdateWorkGroup",
+        "athena:TagResource",
+        "athena:UntagResource",
+        "athena:ListTagsForResource",
+        "athena:StartQueryExecution",
+        "athena:StopQueryExecution",
+        "athena:GetQueryExecution",
+        "athena:GetQueryResults",
+        "athena:ListQueryExecutions"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowLogsAndMonitoring",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:DeleteLogGroup",
+        "logs:DeleteLogStream",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "logs:PutLogEvents",
+        "cloudwatch:PutMetricData",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:GetMetricStatistics",
+        "cloudwatch:ListMetrics"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

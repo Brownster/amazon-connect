@@ -26,5 +26,6 @@ terraform.rc
 *.env
 
 # Sensitive files
-iam-policy.json
-iam-policy-part*.json
+/iam-policy.json
+/iam-policy-part*.json
+# But allow example files in iam-policies directory
