@@ -15,7 +15,7 @@ It also provides a Python script to generate test CTR data for development and t
 
 1. Generate SSH key for Grafana instance:
    ```
-   ./generate_ssh_key.sh
+   ./scripts/generate_ssh_key.sh
    ```
 
 2. Configure AWS credentials:
@@ -48,7 +48,7 @@ It also provides a Python script to generate test CTR data for development and t
    - You'll be prompted to change the password on first login
 
 7. Configure Athena data source in Grafana:
-   - Detailed instructions are in [grafana_athena_setup.md](grafana_athena_setup.md)
+   - Detailed instructions are in [docs/grafana_athena_setup.md](docs/grafana_athena_setup.md)
    - Add a new data source and select "Amazon Athena"
    - Use the following settings:
      - Auth Provider: AWS SDK Default
@@ -61,10 +61,10 @@ It also provides a Python script to generate test CTR data for development and t
 8. Create dashboards to visualize your Amazon Connect data
 
 9. Generate test CTR data:
-   - See [setup_test_data.md](setup_test_data.md) for detailed instructions
+   - See [docs/setup_test_data.md](docs/setup_test_data.md) for detailed instructions
    - Run the provided Python script to send test data to Kinesis:
      ```bash
-     ./generate_ctr_data.py
+     ./scripts/generate_ctr_data.py
      ```
 
 ## Architecture
@@ -105,7 +105,7 @@ terraform destroy
 
 Note: This will delete all data in the S3 buckets and other resources created by this project.
 
-If you encounter permission issues during cleanup, use the provided `cleanup.sh` script to manually delete resources:
+If you encounter permission issues during cleanup, use the provided cleanup script to manually delete resources:
 ```
-./cleanup.sh
+./scripts/cleanup.sh
 ```

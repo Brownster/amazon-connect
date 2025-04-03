@@ -14,7 +14,7 @@ This document explains how to generate test Contact Trace Record (CTR) data for 
    pip install boto3
    ```
 
-3. Update the script configuration in `generate_ctr_data.py`:
+3. Update the script configuration in `scripts/generate_ctr_data.py`:
    ```python
    # Configuration
    STREAM_NAME = "connect-ctr-stream"  # Your Kinesis stream name
@@ -30,7 +30,7 @@ This document explains how to generate test Contact Trace Record (CTR) data for 
 
 5. Run the script:
    ```bash
-   ./generate_ctr_data.py
+   ./scripts/generate_ctr_data.py
    ```
 
 ## Alternative Methods for Generating CTR Data
