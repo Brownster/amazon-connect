@@ -9,6 +9,8 @@ This project sets up a complete data pipeline for Amazon Connect CTR (Contact Tr
 - Amazon Athena
 - Grafana (with Athena datasource)
 
+It also provides a Python script to generate test CTR data for development and testing without requiring actual Amazon Connect interactions.
+
 ## Setup Instructions
 
 1. Generate SSH key for Grafana instance:
@@ -55,6 +57,13 @@ This project sets up a complete data pipeline for Amazon Connect CTR (Contact Tr
      - Output Location: s3://connect-analytics-athena-results-xxx/output/ (from Terraform output)
 
 8. Create dashboards to visualize your Amazon Connect data
+
+9. Generate test CTR data:
+   - See [setup_test_data.md](setup_test_data.md) for detailed instructions
+   - Run the provided Python script to send test data to Kinesis:
+     ```bash
+     ./generate_ctr_data.py
+     ```
 
 ## Architecture
 
