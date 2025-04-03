@@ -8,7 +8,6 @@ This directory contains utility scripts for the AWS Connect Analytics Pipeline p
 - **generate_ctr_data.py** - Generates test Contact Trace Records (CTR) for the pipeline
 - **cleanup.sh** - Helps with manual resource cleanup if Terraform destroy fails
 - **init.sh** - Initializes the project environment
-- **found_ctr_generation script.sh** - Reference script with Firehose configuration ideas (not used directly)
 
 ## Test Data Generation
 
