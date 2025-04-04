@@ -34,6 +34,34 @@ resource "aws_security_group" "grafana" {
     to_port     = 3000
     protocol    = "tcp"
     cidr_blocks = [var.allowed_grafana_cidr] # Configurable for production
+    description = "Grafana web interface"
+  }
+  
+  # Allow Prometheus web UI access
+  ingress {
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = [var.allowed_prometheus_cidr]
+    description = "Prometheus web UI"
+  }
+  
+  # Allow Node Exporter metrics access (internal only)
+  ingress {
+    from_port   = 9100
+    to_port     = 9100
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+    description = "Node Exporter metrics (internal)"
+  }
+  
+  # Allow YACE metrics access (internal only)
+  ingress {
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+    description = "YACE metrics (internal)"
   }
   
   # Allow all outbound traffic
@@ -134,6 +162,52 @@ resource "aws_iam_role_policy" "grafana_athena" {
   })
 }
 
+# IAM Policy for CloudWatch monitoring access
+resource "aws_iam_role_policy" "grafana_monitoring" {
+  name = "grafana-monitoring-policy"
+  role = aws_iam_role.grafana_instance.id
+  
+  # Grant permissions to access CloudWatch metrics for Prometheus/YACE
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "cloudwatch:ListMetrics",
+          "cloudwatch:GetMetricStatistics",
+          "cloudwatch:GetMetricData",
+          "cloudwatch:DescribeAlarms",
+          "tag:GetResources"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+      {
+        Action = [
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams",
+          "logs:GetLogEvents",
+          "logs:FilterLogEvents"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+      {
+        Action = [
+          "connect:ListInstances",
+          "connect:DescribeInstance",
+          "kinesis:ListStreams",
+          "kinesis:DescribeStream",
+          "firehose:ListDeliveryStreams",
+          "firehose:DescribeDeliveryStream"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 # Find latest Amazon Linux 2 AMI for EC2 instance
 data "aws_ami" "amazon_linux" {
   most_recent = true
@@ -167,9 +241,127 @@ resource "aws_instance" "grafana" {
     curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     chmod +x /usr/local/bin/docker-compose
     
-    # Create Grafana Docker Compose file
-    mkdir -p /home/ec2-user/grafana
-    cat > /home/ec2-user/grafana/docker-compose.yml <<'COMPOSE'
+    # Create monitoring directory structure
+    mkdir -p /home/ec2-user/monitoring/{prometheus,yace,grafana,node-exporter}/config
+    chown -R ec2-user:ec2-user /home/ec2-user/monitoring
+    
+    # Create Prometheus configuration
+    cat > /home/ec2-user/monitoring/prometheus/config/prometheus.yml <<'PROM_CONFIG'
+    global:
+      scrape_interval: ${var.scrape_interval}s
+      evaluation_interval: ${var.scrape_interval}s
+    
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+    
+      - job_name: 'node'
+        static_configs:
+          - targets: ['node-exporter:9100']
+    
+      - job_name: 'cloudwatch'
+        static_configs:
+          - targets: ['yace:5000']
+            
+      - job_name: 'grafana'
+        static_configs:
+          - targets: ['grafana:3000']
+    PROM_CONFIG
+    
+    # Create YACE configuration for AWS Connect metrics
+    cat > /home/ec2-user/monitoring/yace/config/yace.yml <<'YACE_CONFIG'
+    apiVersion: v1
+    region: ${var.aws_region}
+    discovery:
+      jobs:
+      - type: connect
+        regions:
+          - ${var.aws_region}
+    
+    static:
+      - namespace: AWS/Connect
+        name: connect
+        regions:
+          - ${var.aws_region}
+        metrics:
+          - name: CallsPerInterval
+            statistics:
+              - Sum
+            period: 300
+            length: 300
+          - name: ContactFlowErrors
+            statistics:
+              - Sum
+            period: 300
+            length: 300
+          - name: MissedCalls
+            statistics:
+              - Sum
+            period: 300
+            length: 300
+          - name: CallBackNotDialableNumber
+            statistics:
+              - Sum
+            period: 300
+            length: 300
+          - name: CallRecordingUploadError
+            statistics:
+              - Sum
+            period: 300
+            length: 300
+          - name: CallsBreachingConcurrencyQuota
+            statistics:
+              - Sum
+            period: 300
+            length: 300
+          - name: ConcurrentCalls
+            statistics:
+              - Maximum
+            period: 60
+            length: 300
+          - name: ConcurrentCallsPercentage
+            statistics:
+              - Maximum
+            period: 60
+            length: 300
+          - name: ThrottledCalls
+            statistics: 
+              - Sum
+            period: 300
+            length: 300
+      
+      - namespace: AWS/Kinesis
+        name: kinesis_stream
+        regions:
+          - ${var.aws_region}
+        dimensions:
+          - StreamName: connect-ctr-stream
+        metrics:
+          - name: GetRecords.IteratorAgeMilliseconds
+            statistics:
+              - Maximum
+            period: 60
+            length: 300
+          - name: IncomingBytes
+            statistics:
+              - Sum
+            period: 60
+            length: 300
+          - name: IncomingRecords
+            statistics:
+              - Sum
+            period: 60
+            length: 300
+          - name: ReadProvisionedThroughputExceeded
+            statistics:
+              - Sum
+            period: 60
+            length: 300
+    YACE_CONFIG
+    
+    # Create Docker Compose file
+    cat > /home/ec2-user/monitoring/docker-compose.yml <<'COMPOSE'
     version: '3'
     services:
       grafana:
@@ -181,22 +373,136 @@ resource "aws_instance" "grafana" {
         volumes:
           - grafana-data:/var/lib/grafana
         environment:
-          - GF_INSTALL_PLUGINS=grafana-athena-datasource
+          - GF_INSTALL_PLUGINS=grafana-athena-datasource,grafana-prometheus-datasource
+        networks:
+          - monitoring
+      
+      prometheus:
+        image: prom/prometheus:v${var.prometheus_version}
+        container_name: prometheus
+        restart: unless-stopped
+        ports:
+          - "9090:9090"
+        volumes:
+          - ./prometheus/config:/etc/prometheus
+          - prometheus-data:/prometheus
+        command:
+          - '--config.file=/etc/prometheus/prometheus.yml'
+          - '--storage.tsdb.path=/prometheus'
+          - '--storage.tsdb.retention.time=${var.retention_days}d'
+          - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+          - '--web.console.templates=/usr/share/prometheus/consoles'
+        networks:
+          - monitoring
+      
+      node-exporter:
+        image: prom/node-exporter:v${var.node_exporter_version}
+        container_name: node-exporter
+        restart: unless-stopped
+        volumes:
+          - /proc:/host/proc:ro
+          - /sys:/host/sys:ro
+          - /:/rootfs:ro
+        command:
+          - '--path.procfs=/host/proc'
+          - '--path.sysfs=/host/sys'
+          - '--path.rootfs=/rootfs'
+        networks:
+          - monitoring
+      
+      yace:
+        image: quay.io/observatorium/yet-another-cloudwatch-exporter:v${var.yace_version}
+        container_name: yace
+        restart: unless-stopped
+        volumes:
+          - ./yace/config:/config
+        environment:
+          - AWS_SDK_LOAD_CONFIG=true
+        command:
+          - '--config.file=/config/yace.yml'
+        networks:
+          - monitoring
+    
+    networks:
+      monitoring:
+        driver: bridge
+    
     volumes:
       grafana-data:
+        driver: local
+      prometheus-data:
+        driver: local
     COMPOSE
     
-    cd /home/ec2-user/grafana
+    # Create management script
+    mkdir -p /home/ec2-user/scripts
+    cat > /home/ec2-user/scripts/update_monitoring.sh <<'SCRIPT'
+    #!/bin/bash
+    
+    # Configuration Variables
+    PROMETHEUS_CONFIG_PATH="/home/ec2-user/monitoring/prometheus/config/prometheus.yml"
+    YACE_CONFIG_PATH="/home/ec2-user/monitoring/yace/config/yace.yml"
+    
+    # Function to reload Prometheus config
+    reload_prometheus() {
+      curl -X POST http://localhost:9090/-/reload
+      echo "Prometheus configuration reloaded"
+    }
+    
+    # Function to restart YACE container
+    restart_yace() {
+      docker restart yace
+      echo "YACE service restarted"
+    }
+    
+    # Function to restart all monitoring services
+    restart_all() {
+      cd /home/ec2-user/monitoring
+      docker-compose restart
+      echo "All monitoring services restarted"
+    }
+    
+    # Menu
+    case "$1" in
+      reload-prometheus)
+        reload_prometheus
+        ;;
+      restart-yace)
+        restart_yace
+        ;;
+      restart-all)
+        restart_all
+        ;;
+      *)
+        echo "Usage: $0 {reload-prometheus|restart-yace|restart-all}"
+        exit 1
+        ;;
+    esac
+    SCRIPT
+    
+    # Make script executable
+    chmod +x /home/ec2-user/scripts/update_monitoring.sh
+    
+    # Start monitoring stack
+    cd /home/ec2-user/monitoring
     docker-compose up -d
     
     # Wait for Grafana to start
     sleep 10
     
-    # Install Athena plugin directly
-    docker exec -it grafana grafana-cli plugins install grafana-athena-datasource
+    # Install Athena plugin directly (it may not have been picked up from the environment variable)
+    docker exec grafana grafana-cli plugins install grafana-athena-datasource
     
-    # Restart Grafana to apply plugin
-    docker-compose restart
+    # Configure default Prometheus datasource in Grafana
+    curl -X POST http://admin:admin@localhost:3000/api/datasources \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "Prometheus",
+        "type": "prometheus",
+        "url": "http://prometheus:9090",
+        "access": "proxy",
+        "isDefault": false
+      }'
   EOF
   
   tags = var.tags

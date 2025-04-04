@@ -78,3 +78,40 @@ variable "tags" {
     Name = "grafana-server"
   }
 }
+
+# Prometheus and monitoring variables
+variable "prometheus_version" {
+  description = "Prometheus version to install"
+  type        = string
+  default     = "2.45.0"
+}
+
+variable "node_exporter_version" {
+  description = "Node Exporter version to install"
+  type        = string
+  default     = "1.6.1"
+}
+
+variable "yace_version" {
+  description = "Yet Another CloudWatch Exporter version"
+  type        = string
+  default     = "0.48.0-alpha"
+}
+
+variable "allowed_prometheus_cidr" {
+  description = "CIDR block for Prometheus web UI access"
+  type        = string
+  default     = "0.0.0.0/0" # Restrict this in production
+}
+
+variable "scrape_interval" {
+  description = "Prometheus scrape interval in seconds"
+  type        = number
+  default     = 60
+}
+
+variable "retention_days" {
+  description = "Prometheus data retention in days"
+  type        = number
+  default     = 15
+}
