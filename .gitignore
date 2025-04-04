@@ -33,3 +33,7 @@ terraform.rc
 # Init command
 .init_output.log
 init
+
+# Claude AI files
+CLAUDE.md
+claude.md
