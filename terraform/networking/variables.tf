@@ -23,7 +23,7 @@ variable "private_subnet_cidr" {
 variable "availability_zone" {
   description = "Availability zone for subnets"
   type        = string
-  default     = "eu-west-2a"
+  default     = "eu-west-1a"
 }
 
 variable "tags" {

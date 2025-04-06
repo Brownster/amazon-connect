@@ -17,6 +17,40 @@ variable "athena_results_bucket" {
   type        = string
 }
 
+variable "athena_workgroup" {
+  description = "Name of the Athena workgroup"
+  type        = string
+  default     = "connect-analytics"
+}
+
+variable "glue_database_name" {
+  description = "Name of the Glue/Athena database"
+  type        = string
+  default     = "connect_ctr_database"
+}
+
+# Timestream variables
+variable "timestream_database_name" {
+  description = "Name of the Timestream database"
+  type        = string
+}
+
+variable "timestream_database_arn" {
+  description = "ARN of the Timestream database"
+  type        = string
+}
+
+variable "timestream_kms_key_arn" {
+  description = "ARN of the KMS key used for Timestream encryption"
+  type        = string
+}
+
+variable "aws_region" {
+  description = "AWS region for resources"
+  type        = string
+  default     = "eu-west-1"
+}
+
 variable "instance_type" {
   description = "EC2 instance type for Grafana"
   type        = string
@@ -77,6 +111,91 @@ variable "tags" {
   default     = {
     Name = "grafana-server"
   }
+}
+
+variable "yace_namespaces" {
+  description = "List of CloudWatch namespaces to monitor with YACE"
+  type = list(object({
+    name       = string
+    dimensions = optional(list(object({
+      name  = string
+      value = string
+    })))
+    metrics = list(object({
+      name       = string
+      statistics = list(string)
+    }))
+  }))
+  default = [
+    {
+      name = "AWS/Connect"
+      metrics = [
+        {
+          name       = "CallsPerInterval"
+          statistics = ["Sum"]
+        },
+        {
+          name       = "ContactFlowErrors"
+          statistics = ["Sum"]
+        },
+        {
+          name       = "MissedCalls"
+          statistics = ["Sum"]
+        },
+        {
+          name       = "CallBackNotDialableNumber"
+          statistics = ["Sum"]
+        },
+        {
+          name       = "CallRecordingUploadError"
+          statistics = ["Sum"]
+        },
+        {
+          name       = "CallsBreachingConcurrencyQuota"
+          statistics = ["Sum"]
+        },
+        {
+          name       = "ConcurrentCalls"
+          statistics = ["Maximum"]
+        },
+        {
+          name       = "ConcurrentCallsPercentage"
+          statistics = ["Maximum"]
+        },
+        {
+          name       = "ThrottledCalls"
+          statistics = ["Sum"]
+        }
+      ]
+    },
+    {
+      name = "AWS/Kinesis"
+      dimensions = [
+        {
+          name  = "StreamName"
+          value = "connect-ctr-stream"
+        }
+      ]
+      metrics = [
+        {
+          name       = "GetRecords.IteratorAgeMilliseconds"
+          statistics = ["Maximum"]
+        },
+        {
+          name       = "IncomingBytes"
+          statistics = ["Sum"]
+        },
+        {
+          name       = "IncomingRecords"
+          statistics = ["Sum"]
+        },
+        {
+          name       = "ReadProvisionedThroughputExceeded"
+          statistics = ["Sum"]
+        }
+      ]
+    }
+  ]
 }
 
 # Prometheus and monitoring variables

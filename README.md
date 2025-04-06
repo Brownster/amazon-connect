@@ -123,9 +123,35 @@ cd terraform
 terraform destroy
 ```
 
-Note: This will delete all data in the S3 buckets and other resources created by this project.
+### Troubleshooting Cleanup Issues
 
-If you encounter permission issues during cleanup, use the provided cleanup script to manually delete resources:
+#### S3 Bucket Not Empty Error
+If you receive an error like this during destruction:
+```
+Error: deleting S3 Bucket (connect-ctr-data-xxxxxxxx): BucketNotEmpty: The bucket you tried to delete is not empty
+```
+
+You need to empty the bucket first. You can do this in several ways:
+
+1. **Using AWS CLI**:
+   ```bash
+   aws s3 rm s3://your-bucket-name --recursive
+   ```
+
+2. **Using AWS Console**:
+   - Go to the AWS Management Console
+   - Navigate to S3
+   - Select your bucket
+   - Select all objects and delete them
+   - Then run `terraform destroy` again
+
+3. **Update Terraform configuration**:
+   For future deployments, add `force_destroy = true` to the S3 bucket resource in your Terraform code to automatically empty buckets during destruction.
+
+#### Other Resource Deletion Issues
+If you encounter other permission issues during cleanup, use the provided cleanup script to manually delete resources:
 ```
 ./scripts/cleanup.sh
 ```
+
+Note: When you destroy this infrastructure, all data in S3 buckets, Timestream databases, and other resources will be permanently deleted.

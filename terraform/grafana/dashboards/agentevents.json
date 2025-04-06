@@ -1,0 +1,1573 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_AMAZON_TIMESTREAM",
+      "label": "Amazon Timestream",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "grafana-timestream-datasource",
+      "pluginName": "Amazon Timestream"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.4.7"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-timestream-datasource",
+      "name": "Amazon Timestream",
+      "version": "2.6.1"
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [
+        "ConnectContactEvents"
+      ],
+      "targetBlank": false,
+      "title": "ConnectContactEvents",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 31,
+      "panels": [],
+      "title": "Summary from Agent Events",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "links": [
+            {
+              "title": "",
+              "url": "/d/${__dashboard.uid}﻿/${__dashboard}?var-AgentStatus=${__data.fields.Status}"
+            }
+          ],
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Username (distinctCount)"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 9,
+        "x": 0,
+        "y": 1
+      },
+      "id": 46,
+      "options": {
+        "displayLabels": [
+          "name",
+          "value",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 2,
+          "refId": "A"
+        }
+      ],
+      "title": "Status Summary",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Status": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Username": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 50
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "# of Agents"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Agents ${__data.fields.CurrentAgentSnapshot_AgentStatus_Name} ",
+                    "url": "/d/${__dashboard.uid}﻿/${__dashboard}?var-AgentStatus=${__data.fields.CurrentAgentSnapshot_AgentStatus_Name}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 3,
+        "x": 9,
+        "y": 1
+      },
+      "id": 45,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 2,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "ROUTABLE"
+                  }
+                },
+                "fieldName": "Type"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Available Chat Slots": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "Available Task Slots": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "Available Voice Slots": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "EntityType": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Available Chat Slots (sum)": "Available Chat Slots",
+              "Available Task Slots (sum)": "Available Task Slots",
+              "Available Voice Slots (sum)": "Available Voice Slots"
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Available Chat Slots",
+                "Available Voice Slots",
+                "Available Task Slots"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "links": [
+            {
+              "title": "",
+              "url": "/d/${__dashboard.uid}﻿/${__dashboard}?var-RoutingProfile=${__data.fields.Routing Profile}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "# of Agents"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 104
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Routing Profile"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 217
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "id": 40,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 2,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "Available"
+                  }
+                },
+                "fieldName": "Status"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Routing Profile": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Username": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Username (distinctCount)": "# of Available Agents"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 41,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "# of Contacts"
+          }
+        ]
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 2,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Username": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Type": "Status Type",
+              "Username (distinctCount)": "# of Agents"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 6
+      },
+      "id": 44,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 2,
+          "refId": "A"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Handling": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Contact Status": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Username": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Username (distinctCount)": "# of Agents"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-timestream-datasource",
+        "uid": "${DS_AMAZON_TIMESTREAM}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Agent"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 243
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CurrentAgentSnapshot_AgentStatus_Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 218
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CurrentAgentSnapshot_AgentStatus_Type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 188
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "EntityType"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "In Status Time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 3600
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Contact Status"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "blue",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "Not OnContact": {
+                        "color": "red",
+                        "index": 0
+                      },
+                      "OnContact": {
+                        "color": "green",
+                        "index": 1
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Routing Profile"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 193
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 2,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Username"
+          }
+        ]
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "database": "\"test\"",
+          "datasource": {
+            "type": "grafana-timestream-datasource",
+            "uid": "${DS_AMAZON_TIMESTREAM}"
+          },
+          "measure": "measure_name",
+          "rawQuery": "With \nInstanceBaseQuery AS (\n    SELECT InstanceAlias, Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"ConnectRealTime\".\"Instance\" \n    GROUP BY time, InstanceAlias, Arn\n),\nInstanceAliasQuery AS (\n    SELECT InstanceAlias, Arn FROM InstanceBaseQuery\n    WHERE seqnum =1\n),\nBaseQuery as (\n  SELECT \n    \"CurrentAgentSnapshot_Configuration_Username\", \n    \"CurrentAgentSnapshot_AgentStatus_Name\",   \n    \"CurrentAgentSnapshot_AgentStatus_Type\",   \n    \"_X_OnContact\",\n    \"CurrentAgentSnapshot_Configuration_RoutingProfile_Name\",\n    \"CurrentAgentSnapshot_AgentStatus_StartTimestamp\",\n    \"EventTimestamp\",\n    \"EventType\" \"Update Event\",\n    \"InstanceARN\",\n    \"_X_AvailableChatSlots\",\n    \"_X_AvailableVoiceSlots\",\n    \"_X_AvailableTaskSlots\", \n\n    ROW_NUMBER() OVER (PARTITION BY \"CurrentAgentSnapshot_Configuration_Username\" ORDER BY time desc) AS seqnum\n  FROM \"$DatabaseName\".\"AgentEvent\" eventsourcetable\n\n  WHERE \n    time BETWEEN from_milliseconds(${__from}) AND from_milliseconds(${__to})  \n    AND \"measure_name\" = 'AgentEvent'\n)\nSelect \n  eventsource.\"CurrentAgentSnapshot_Configuration_Username\" \"Username\", \n  eventsource.\"CurrentAgentSnapshot_AgentStatus_Name\" \"Status\",   \n  CASE WHEN eventsource.\"_X_OnContact\" THEN 'OnContact'   ELSE 'Not OnContact' END \"Contact Status\",\n  eventsource.\"CurrentAgentSnapshot_AgentStatus_Type\" \"Type\",   \n  eventsource.\"CurrentAgentSnapshot_Configuration_RoutingProfile_Name\" \"Routing Profile\",\n  date_diff('second',  from_iso8601_timestamp(eventsource.\"CurrentAgentSnapshot_AgentStatus_StartTimestamp\"), now()) \"In Status Time\",    \n  from_iso8601_timestamp(eventsource.\"CurrentAgentSnapshot_AgentStatus_StartTimestamp\") \"Status Start\",\n  from_iso8601_timestamp(eventsource.\"EventTimestamp\") \"Last Updated\",\n  \"Update Event\", \n  eventsource.\"_X_AvailableChatSlots\" \"Available Chat Slots\", \n  eventsource.\"_X_AvailableVoiceSlots\" \"Available Voice Slots\",\n  eventsource.\"_X_AvailableTaskSlots\" \"Available Task Slots\", \n  'Agent' \"EntityType\"\n\nFROM BaseQuery eventsource\n    LEFT JOIN InstanceAliasQuery instance\n    ON eventsource.InstanceARN = instance.Arn\nWHERE seqnum=1\n    AND (\"CurrentAgentSnapshot_AgentStatus_Name\" IN ( $AgentStatus ))\n    AND (\"CurrentAgentSnapshot_AgentStatus_Type\" IN ( $StatusType ))\n    AND (\"CurrentAgentSnapshot_Configuration_RoutingProfile_Name\" IN ( $RoutingProfile  ))\n    AND (CASE WHEN _X_OnContact THEN 'OnContact'   ELSE 'Not OnContact' END IN ( $OnContact   ))\n    AND instance.InstanceAlias IN ( $InstanceAlias )\nORDER BY \"CurrentAgentSnapshot_Configuration_Username\"\n",
+          "refId": "A",
+          "table": "\"AgentConfig\""
+        }
+      ],
+      "title": "Agents Details",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 36,
+      "panels": [],
+      "title": "TimeSeries Analysis of Agent Events",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-timestream-datasource",
+        "uid": "${DS_AMAZON_TIMESTREAM}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Max Number of Available Agents"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 10,
+        "x": 0,
+        "y": 23
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "database": "\"test\"",
+          "datasource": {
+            "type": "grafana-timestream-datasource",
+            "uid": "${DS_AMAZON_TIMESTREAM}"
+          },
+          "measure": "measure_name",
+          "rawQuery": "With \nInstanceBaseQuery AS (\n    SELECT InstanceAlias, Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"ConnectRealTime\".\"Instance\" \n    GROUP BY time, InstanceAlias, Arn\n),\nInstanceAliasQuery AS (\n    SELECT InstanceAlias, Arn FROM InstanceBaseQuery\n    WHERE seqnum =1\n), \nBaseAvailabilityByDate AS (\nSELECT \nBIN(time, greatest($__interval_ms,5m)) binned_timestamp,\nAgentARN,\nMax(CASE\n    WHEN CurrentAgentSnapshot_AgentStatus_Name = 'Available' THEN 1\n    ELSE 0\nEND) \"Max Availability\",\nMin(CASE\n    WHEN CurrentAgentSnapshot_AgentStatus_Name = 'Available' THEN 1\n    ELSE 0\nEND) \"Min Availability\"\nFROM \"$DatabaseName\".\"AgentEvent\" eventsource\n    LEFT JOIN InstanceAliasQuery instance\n    ON eventsource.InstanceARN = instance.Arn\nWhere \n    time BETWEEN from_milliseconds(${__from}) AND from_milliseconds(${__to}) \n    AND \"measure_name\" = 'AgentEvent' \n    AND instance.InstanceAlias IN ( $InstanceAlias )\nGroup by BIN(time, greatest($__interval_ms,5m)) , AgentARN\n),\nSumAvailabilityByDate AS (\nSELECT \nbinned_timestamp,\nsum (\"Max Availability\") as \"Max Number of Available Agents\",\nsum (\"Min Availability\") as \"Min Number of Available Agents\"\nFROM BaseAvailabilityByDate\nGROUP BY binned_timestamp\n)\nSELECT \nCREATE_TIME_SERIES (binned_timestamp,\"Max Number of Available Agents\") \"Max Number of Available Agents\",\nCREATE_TIME_SERIES (binned_timestamp,\"Min Number of Available Agents\") \"Min Number of Available Agents\"\nFROM SumAvailabilityByDate",
+          "refId": "A",
+          "table": "\"AgentConfig\""
+        }
+      ],
+      "title": "Agent Availability Through Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-timestream-datasource",
+        "uid": "${DS_AMAZON_TIMESTREAM}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 14,
+        "x": 10,
+        "y": 23
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "database": "\"test\"",
+          "datasource": {
+            "type": "grafana-timestream-datasource",
+            "uid": "${DS_AMAZON_TIMESTREAM}"
+          },
+          "measure": "measure_name",
+          "rawQuery": "\nWith \nInstanceBaseQuery AS (\n    SELECT InstanceAlias, Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"ConnectRealTime\".\"Instance\" \n    GROUP BY time, InstanceAlias, Arn\n),\nInstanceAliasQuery AS (\n    SELECT InstanceAlias, Arn FROM InstanceBaseQuery\n    WHERE seqnum =1\n),\n BaseAvailabilityByDate AS (\nSelect \nBIN(time, greatest($__interval_ms,5m)) binned_timestamp,\nAgentARN,\nMax(\"_X_AvailableChatSlots\") \"Max _X_AvailableChatSlots\",\nMin(\"_X_AvailableChatSlots\") \"Min _X_AvailableChatSlots\",\nMax(\"_X_AvailableVoiceSlots\") \"Max _X_AvailableVoiceSlots\",\nMin(\"_X_AvailableVoiceSlots\") \"Min _X_AvailableVoiceSlots\",\nMax(\"_X_AvailableTaskSlots\") \"Max _X_AvailableTaskSlots\",\nMin(\"_X_AvailableTaskSlots\") \"Min _X_AvailableTaskSlots\"\nFROM \"$DatabaseName\".\"AgentEvent\" eventsource\n    LEFT JOIN InstanceAliasQuery instance\n    ON eventsource.InstanceARN = instance.Arn\nWhere \n  time BETWEEN from_milliseconds(${__from}) AND from_milliseconds(${__to})    \n  AND CurrentAgentSnapshot_AgentStatus_Name = 'Available'\n  AND \"measure_name\" = 'AgentEvent'\n   AND instance.InstanceAlias IN ( $InstanceAlias )\nGroup by BIN(time, greatest($__interval_ms,5m)), AgentARN\n),\nSumAvailabilityByTime as (SELECT\nbinned_timestamp,\nCOALESCE(Sum(\"Max _X_AvailableChatSlots\"),0) \"Max _X_AvailableChatSlots\",\nCOALESCE(Sum(\"Min _X_AvailableChatSlots\"),0) \"Min _X_AvailableChatSlots\",\nCOALESCE(Sum(\"Max _X_AvailableVoiceSlots\"),0) \"Max _X_AvailableVoiceSlots\",\nCOALESCE(Sum(\"Min _X_AvailableVoiceSlots\"),0) \"Min _X_AvailableVoiceSlots\",\nCOALESCE(Sum(\"Max _X_AvailableTaskSlots\"),0) \"Max _X_AvailableTaskSlots\",\nCOALESCE(Sum(\"Min _X_AvailableTaskSlots\"),0) \"Min _X_AvailableTaskSlots\"\nFROM BaseAvailabilityByDate\nGROUP BY binned_timestamp\n)\nSELECT \nCREATE_TIME_SERIES (binned_timestamp,\"Max _X_AvailableChatSlots\") \"Max AvailableChatSlots\",\nCREATE_TIME_SERIES (binned_timestamp,\"Min _X_AvailableChatSlots\") \"Min AvailableChatSlots\",\nCREATE_TIME_SERIES (binned_timestamp,\"Max _X_AvailableVoiceSlots\") \"Max AvailableVoiceSlots\",\nCREATE_TIME_SERIES (binned_timestamp,\"Min _X_AvailableVoiceSlots\") \"Min AvailableVoiceSlots\",\nCREATE_TIME_SERIES (binned_timestamp,\"Max _X_AvailableTaskSlots\") \"Max AvailableTaskSlots\",\nCREATE_TIME_SERIES (binned_timestamp,\"Min _X_AvailableTaskSlots\") \"Min AvailableTaskSlots\"\nFROM SumAvailabilityByTime",
+          "refId": "A",
+          "table": "\"AgentConfig\""
+        }
+      ],
+      "title": "Available Slots Through Time",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "id": 29,
+      "panels": [],
+      "title": "Contact Metrics from Agent Events",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-timestream-datasource",
+        "uid": "${DS_AMAZON_TIMESTREAM}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 0,
+        "y": 34
+      },
+      "id": 20,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "database": "\"test\"",
+          "datasource": {
+            "type": "grafana-timestream-datasource",
+            "uid": "${DS_AMAZON_TIMESTREAM}"
+          },
+          "measure": "measure_name",
+          "rawQuery": "\nWith \nInstanceBaseQuery AS (\n    SELECT InstanceAlias, Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"ConnectRealTime\".\"Instance\" \n    GROUP BY time, InstanceAlias, Arn\n),\nInstanceAliasQuery AS (\n    SELECT InstanceAlias, Arn FROM InstanceBaseQuery\n    WHERE seqnum =1\n), \nUserBaseQuery AS (\n    SELECT Username,\"IdentityInfo_FirstName\",\"IdentityInfo_LastName\", Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"$DatabaseName\".\"User\" \n    GROUP BY time, Username, \"IdentityInfo_FirstName\",\"IdentityInfo_LastName\", Arn\n),\nUserNameQuery AS (\n    SELECT Username, \"IdentityInfo_FirstName\",\"IdentityInfo_LastName\", Arn FROM UserBaseQuery\n    WHERE seqnum =1\n), \nBaseQuery AS (\nSELECT \n  eventsourcetable.\"Agent_AgentARN\",\n  Count (distinct eventsourcetable.\"ContactId\") \"# of Contacts\"\nFROM \"$DatabaseName\".\"AgentEvent_Contact\" eventsourcetable\nWHERE \n   eventsourcetable.time BETWEEN from_milliseconds(${__from}) AND from_milliseconds(${__to})    \n   AND eventsourcetable.\"State\" = 'MISSED'\nGROUP BY eventsourcetable.\"Agent_AgentARN\"\nORDER BY \"# of Contacts\" DESC\nLIMIT 5\n)\nSELECT \n  users.\"Username\",\n  users.\"IdentityInfo_FirstName\" \"First Name\",\n  users.\"IdentityInfo_LastName\" \"Last Name\",\n  eventsourcetable.\"# of Contacts\"\nFROM BaseQuery eventsourcetable\n    LEFT JOIN UserNameQuery users\n    ON users.Arn = eventsourcetable.Agent_AgentARN\n    LEFT JOIN InstanceAliasQuery instance\n    ON eventsourcetable.Agent_AgentARN like concat(instance.Arn,'%')\n",
+          "refId": "A",
+          "table": "\"AgentConfig\""
+        }
+      ],
+      "title": "Missed Contacts Leaderboard",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-timestream-datasource",
+        "uid": "${DS_AMAZON_TIMESTREAM}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 10,
+        "y": 34
+      },
+      "id": 21,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "database": "\"test\"",
+          "datasource": {
+            "type": "grafana-timestream-datasource",
+            "uid": "${DS_AMAZON_TIMESTREAM}"
+          },
+          "measure": "measure_name",
+          "rawQuery": "With \nInstanceBaseQuery AS (\n    SELECT InstanceAlias, Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"ConnectRealTime\".\"Instance\" \n    GROUP BY time, InstanceAlias, Arn\n),\nInstanceAliasQuery AS (\n    SELECT InstanceAlias, Arn FROM InstanceBaseQuery\n    WHERE seqnum =1\n), \nUserBaseQuery AS (\n    SELECT Username,\"IdentityInfo_FirstName\",\"IdentityInfo_LastName\", Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"$DatabaseName\".\"User\" \n    GROUP BY time, Username, \"IdentityInfo_FirstName\",\"IdentityInfo_LastName\", Arn\n),\nUserNameQuery AS (\n    SELECT Username, \"IdentityInfo_FirstName\",\"IdentityInfo_LastName\", Arn FROM UserBaseQuery\n    WHERE seqnum =1\n), \nBaseQuery AS (\nSELECT \n  eventsourcetable.\"Agent_AgentARN\", \n  Count (distinct eventsourcetable.\"ContactId\") \"# of Contacts\"\nFROM \"$DatabaseName\".\"AgentEvent_Contact\" eventsourcetable\nWHERE \n  eventsourcetable.\"State\" = 'CONNECTED'\n  AND eventsourcetable.time BETWEEN from_milliseconds(${__from}) AND from_milliseconds(${__to})    \nGROUP BY eventsourcetable.\"Agent_AgentARN\"\nORDER BY \"# of Contacts\" DESC\nLIMIT 5\n)\nSELECT \n  users.\"Username\",\n  users.\"IdentityInfo_FirstName\" \"First Name\",\n  users.\"IdentityInfo_LastName\" \"Last Name\",\n  eventsourcetable.\"# of Contacts\"\nFROM BaseQuery eventsourcetable\n    LEFT JOIN UserNameQuery users\n    ON users.Arn = eventsourcetable.Agent_AgentARN\n    LEFT JOIN InstanceAliasQuery instance\n    ON eventsourcetable.Agent_AgentARN like concat(instance.Arn,'%')",
+          "refId": "A",
+          "table": "\"AgentConfig\""
+        }
+      ],
+      "title": "Answered Contacts Leaderboard",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-timestream-datasource",
+        "uid": "${DS_AMAZON_TIMESTREAM}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 5,
+        "x": 19,
+        "y": 34
+      },
+      "id": 22,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "database": "\"test\"",
+          "datasource": {
+            "type": "grafana-timestream-datasource",
+            "uid": "${DS_AMAZON_TIMESTREAM}"
+          },
+          "measure": "measure_name",
+          "rawQuery": "With \nInstanceBaseQuery AS (\n    SELECT InstanceAlias, Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"ConnectRealTime\".\"Instance\" \n    GROUP BY time, InstanceAlias, Arn\n),\nInstanceAliasQuery AS (\n    SELECT InstanceAlias, Arn FROM InstanceBaseQuery\n    WHERE seqnum =1\n)\nSELECT \n  \"Queue_Name\",\n  Count (distinct \"ContactId\") \"# of Contacts\"\nFROM \"$DatabaseName\".\"AgentEvent_Contact\" eventsourcetable\n    LEFT JOIN InstanceAliasQuery instance\n    ON eventsourcetable.Agent_AgentARN like concat(instance.Arn,'%')\nWHERE \n  \"State\" = 'MISSED'\n  AND time BETWEEN from_milliseconds(${__from}) AND from_milliseconds(${__to})  \nGROUP BY \"Queue_Name\"\nORDER BY \"# of Contacts\"  DESC\n",
+          "refId": "A",
+          "table": "\"AgentConfig\""
+        }
+      ],
+      "title": "Missed Contacts per Queue",
+      "type": "table"
+    }
+  ],
+  "refresh": "5s",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "ConnectAgentEvents"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-timestream-datasource",
+          "uid": "${DS_AMAZON_TIMESTREAM}"
+        },
+        "definition": "SELECT distinct  (\"InstanceAlias\")\nFROM \"$DatabaseName\".\"Instance\" ",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Instance",
+        "multi": true,
+        "name": "InstanceAlias",
+        "options": [],
+        "query": "SELECT distinct  (\"InstanceAlias\")\nFROM \"$DatabaseName\".\"Instance\" ",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "ConnectRealTime",
+          "value": "ConnectRealTime"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": "Database Name",
+        "multi": false,
+        "name": "DatabaseName",
+        "options": [
+          {
+            "selected": true,
+            "text": "ConnectRealTime",
+            "value": "ConnectRealTime"
+          }
+        ],
+        "query": "ConnectRealTime",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-timestream-datasource",
+          "uid": "${DS_AMAZON_TIMESTREAM}"
+        },
+        "definition": "SELECT  distinct  CurrentAgentSnapshot_AgentStatus_Name FROM \"$DatabaseName\".\"AgentEvent\" ",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Agent Status",
+        "multi": true,
+        "name": "AgentStatus",
+        "options": [],
+        "query": "SELECT  distinct  CurrentAgentSnapshot_AgentStatus_Name FROM \"$DatabaseName\".\"AgentEvent\" ",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "hide": 0,
+        "includeAll": true,
+        "label": "Status Type",
+        "multi": true,
+        "name": "StatusType",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "ROUTABLE",
+            "value": "ROUTABLE"
+          },
+          {
+            "selected": false,
+            "text": "CUSTOM",
+            "value": "CUSTOM"
+          },
+          {
+            "selected": false,
+            "text": "OFFLINE",
+            "value": "OFFLINE"
+          }
+        ],
+        "query": "ROUTABLE, CUSTOM, OFFLINE",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-timestream-datasource",
+          "uid": "${DS_AMAZON_TIMESTREAM}"
+        },
+        "definition": "SELECT  distinct  CurrentAgentSnapshot_Configuration_RoutingProfile_Name FROM \"$DatabaseName\".\"AgentEvent\" ",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Routing Profile",
+        "multi": true,
+        "name": "RoutingProfile",
+        "options": [],
+        "query": "SELECT  distinct  CurrentAgentSnapshot_Configuration_RoutingProfile_Name FROM \"$DatabaseName\".\"AgentEvent\" ",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "hide": 0,
+        "includeAll": true,
+        "label": "On Contact",
+        "multi": true,
+        "name": "OnContact",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "OnContact",
+            "value": "OnContact"
+          },
+          {
+            "selected": false,
+            "text": "Not OnContact",
+            "value": "Not OnContact"
+          }
+        ],
+        "query": "OnContact,Not OnContact",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": false,
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Agent Events",
+  "uid": "8NxBWIzIk",
+  "version": 59,
+  "weekStart": ""
+}

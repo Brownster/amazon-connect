@@ -27,5 +27,9 @@ Some key permissions to note:
 
 - `connect:*` - Allows full access to Amazon Connect resources
 - `iam:PassRole` - Required for services to assume specific IAM roles
+- `iam:CreateServiceLinkedRole` - Required for creating Amazon Connect service-linked roles
+- `iam:PutRolePolicy` - Required for updating Amazon Connect service-linked roles
+- `kinesis:IncreaseStreamRetentionPeriod` - Required when changing Kinesis stream retention periods
+- `kinesis:DecreaseStreamRetentionPeriod` - Required when changing Kinesis stream retention periods
 - `glue:GetTags` - Required when deleting Glue database resources
 - Various S3 permissions - Required for both data storage and Athena query results

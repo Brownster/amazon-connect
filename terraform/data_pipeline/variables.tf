@@ -83,7 +83,7 @@ variable "s3_bucket_prefix" {
 variable "s3_force_destroy" {
   description = "Whether the bucket can be destroyed when not empty"
   type        = bool
-  default     = false
+  default     = true   # Set to true to allow automatic deletion of objects when destroying the bucket
 }
 
 variable "firehose_role_name" {

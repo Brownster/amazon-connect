@@ -51,7 +51,7 @@ resource "aws_security_group" "grafana" {
     from_port   = 9100
     to_port     = 9100
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+    cidr_blocks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"] # TODO: Restrict these CIDR blocks in production
     description = "Node Exporter metrics (internal)"
   }
   
@@ -60,7 +60,7 @@ resource "aws_security_group" "grafana" {
     from_port   = 5000
     to_port     = 5000
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+    cidr_blocks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"] # TODO: Restrict these CIDR blocks in production
     description = "YACE metrics (internal)"
   }
   
@@ -157,6 +157,40 @@ resource "aws_iam_role_policy" "grafana_athena" {
         ]
         Effect   = "Allow"
         Resource = "*"
+      }
+    ]
+  })
+}
+
+# IAM Policy for Grafana to access Timestream
+resource "aws_iam_role_policy" "grafana_timestream" {
+  name = "grafana-timestream-policy"
+  role = aws_iam_role.grafana_instance.id
+  
+  # Grant permissions to query Timestream
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "timestream:DescribeEndpoints",
+          "timestream:SelectValues",
+          "timestream:CancelQuery",
+          "timestream:ListDatabases",
+          "timestream:ListTables",
+          "timestream:ListMeasures",
+          "timestream:DescribeDatabase",
+          "timestream:DescribeTable"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+      {
+        Action = [
+          "kms:Decrypt"
+        ]
+        Effect   = "Allow"
+        Resource = var.timestream_kms_key_arn
       }
     ]
   })
@@ -271,95 +305,42 @@ resource "aws_instance" "grafana" {
     
     # Create YACE configuration for AWS Connect metrics
     cat > /home/ec2-user/monitoring/yace/config/yace.yml <<'YACE_CONFIG'
-    apiVersion: v1
-    region: ${var.aws_region}
-    discovery:
-      jobs:
-      - type: connect
-        regions:
-          - ${var.aws_region}
-    
-    static:
-      - namespace: AWS/Connect
-        name: connect
-        regions:
-          - ${var.aws_region}
-        metrics:
-          - name: CallsPerInterval
-            statistics:
-              - Sum
-            period: 300
-            length: 300
-          - name: ContactFlowErrors
-            statistics:
-              - Sum
-            period: 300
-            length: 300
-          - name: MissedCalls
-            statistics:
-              - Sum
-            period: 300
-            length: 300
-          - name: CallBackNotDialableNumber
-            statistics:
-              - Sum
-            period: 300
-            length: 300
-          - name: CallRecordingUploadError
-            statistics:
-              - Sum
-            period: 300
-            length: 300
-          - name: CallsBreachingConcurrencyQuota
-            statistics:
-              - Sum
-            period: 300
-            length: 300
-          - name: ConcurrentCalls
-            statistics:
-              - Maximum
-            period: 60
-            length: 300
-          - name: ConcurrentCallsPercentage
-            statistics:
-              - Maximum
-            period: 60
-            length: 300
-          - name: ThrottledCalls
-            statistics: 
-              - Sum
-            period: 300
-            length: 300
-      
-      - namespace: AWS/Kinesis
-        name: kinesis_stream
-        regions:
-          - ${var.aws_region}
-        dimensions:
-          - StreamName: connect-ctr-stream
-        metrics:
-          - name: GetRecords.IteratorAgeMilliseconds
-            statistics:
-              - Maximum
-            period: 60
-            length: 300
-          - name: IncomingBytes
-            statistics:
-              - Sum
-            period: 60
-            length: 300
-          - name: IncomingRecords
-            statistics:
-              - Sum
-            period: 60
-            length: 300
-          - name: ReadProvisionedThroughputExceeded
-            statistics:
-              - Sum
-            period: 60
-            length: 300
+    ${templatefile("${path.module}/yace.yml.tpl", {
+      aws_region      = var.aws_region,
+      yace_namespaces = var.yace_namespaces
+    })}
     YACE_CONFIG
     
+    # Create dashboards and provisioning directories
+    mkdir -p /home/ec2-user/monitoring/grafana/dashboards
+    mkdir -p /home/ec2-user/monitoring/grafana/provisioning/dashboards
+    
+    # Create dashboard provisioning configuration
+    cat > /home/ec2-user/monitoring/grafana/provisioning/dashboards/dashboards.yaml <<'DASHBOARD_PROVISIONING'
+    apiVersion: 1
+    
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: 'Connect'
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 10
+        allowUiUpdates: true
+        options:
+          path: /etc/grafana/provisioning/dashboards
+          foldersFromFilesStructure: false
+    DASHBOARD_PROVISIONING
+    
+    # Copy dashboard JSON files to the provisioning directory
+    cat > /home/ec2-user/monitoring/grafana/provisioning/dashboards/contact_events.json <<'CONTACT_EVENTS_DASHBOARD'
+${file("${path.module}/dashboards/contact_events.json")}
+CONTACT_EVENTS_DASHBOARD
+
+    cat > /home/ec2-user/monitoring/grafana/provisioning/dashboards/agent_events.json <<'AGENT_EVENTS_DASHBOARD'
+${file("${path.module}/dashboards/agentevents.json")}
+AGENT_EVENTS_DASHBOARD
+
     # Create Docker Compose file
     cat > /home/ec2-user/monitoring/docker-compose.yml <<'COMPOSE'
     version: '3'
@@ -372,8 +353,11 @@ resource "aws_instance" "grafana" {
           - "3000:3000"
         volumes:
           - grafana-data:/var/lib/grafana
+          - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+          - ./grafana/provisioning:/etc/grafana/provisioning
         environment:
-          - GF_INSTALL_PLUGINS=grafana-athena-datasource,grafana-prometheus-datasource
+          - GF_INSTALL_PLUGINS=grafana-athena-datasource,grafana-prometheus-datasource,grafana-timestream-datasource
+          - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/contact_events.json
         networks:
           - monitoring
       
@@ -493,7 +477,7 @@ resource "aws_instance" "grafana" {
     # Install Athena plugin directly (it may not have been picked up from the environment variable)
     docker exec grafana grafana-cli plugins install grafana-athena-datasource
     
-    # Configure default Prometheus datasource in Grafana
+    # Configure Prometheus datasource in Grafana
     curl -X POST http://admin:admin@localhost:3000/api/datasources \
       -H "Content-Type: application/json" \
       -d '{
@@ -502,6 +486,39 @@ resource "aws_instance" "grafana" {
         "url": "http://prometheus:9090",
         "access": "proxy",
         "isDefault": false
+      }'
+      
+    # Configure Athena datasource in Grafana
+    curl -X POST http://admin:admin@localhost:3000/api/datasources \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "Athena",
+        "type": "grafana-athena-datasource",
+        "jsonData": {
+          "authType": "default",
+          "defaultRegion": "${var.aws_region}",
+          "catalog": "AwsDataCatalog",
+          "database": "${var.glue_database_name}",
+          "workgroup": "${var.athena_workgroup}",
+          "outputLocation": "s3://${var.athena_results_bucket}/output/"
+        },
+        "access": "proxy",
+        "isDefault": false
+      }'
+      
+    # Configure Timestream datasource in Grafana
+    curl -X POST http://admin:admin@localhost:3000/api/datasources \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "Timestream",
+        "type": "grafana-timestream-datasource",
+        "jsonData": {
+          "authType": "default",
+          "defaultRegion": "${var.aws_region}",
+          "defaultDatabase": "${var.timestream_database_name}"
+        },
+        "access": "proxy",
+        "isDefault": true
       }'
   EOF
   

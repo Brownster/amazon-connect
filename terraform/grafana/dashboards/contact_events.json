@@ -1,0 +1,4003 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_AMAZON_TIMESTREAM",
+      "label": "Amazon Timestream",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "grafana-timestream-datasource",
+      "pluginName": "Amazon Timestream"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.4.7"
+    },
+    {
+      "type": "datasource",
+      "id": "grafana-timestream-datasource",
+      "name": "Amazon Timestream",
+      "version": "2.6.1"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [
+        "ConnectAgentEvents"
+      ],
+      "targetBlank": false,
+      "title": "ConnectAgentEvents",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 45,
+      "panels": [],
+      "title": "Summary from Contact Events",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 0,
+        "y": 1
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Number of Contacts",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id"
+              ]
+            }
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "seriesToRows",
+            "reducers": [
+              "distinctCount"
+            ]
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 3,
+        "y": 1
+      },
+      "id": 52,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Queued",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": true
+                  }
+                },
+                "fieldName": "Queued"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": []
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Queued": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 5,
+        "y": 1
+      },
+      "id": 36,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "With Agent",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "CONNECTED_TO_AGENT"
+                  }
+                },
+                "fieldName": "Status"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 7,
+        "y": 1
+      },
+      "id": 54,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "In Queue",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "QUEUED"
+                  }
+                },
+                "fieldName": "Status"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "dthms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 9,
+        "y": 1
+      },
+      "id": 31,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Avg. Abandon Time ",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "LONG ABANDONED"
+                  }
+                },
+                "fieldName": "SLAStatus"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "SHORT ABANDONED"
+                  }
+                },
+                "fieldName": "SLAStatus"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Queue Wait Secs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Status": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Queue Wait Secs (mean)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "max": 10000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Channel"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 126
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 5,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": false,
+        "sortBy": []
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Contact Count per channel",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Channel": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Contact Id": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Contact Id (count)": "# of Contacts"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Channel"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "max": 10000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "# of Contacts"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 4,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": false,
+        "sortBy": []
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Contact Count per Current Status ",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "Last Event Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Status": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Contact Id (count)": "# of Contacts"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Status"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "max": 10000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "# of Contacts"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 6,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": false
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Contact Count per Initiation Method",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "Initiation Method": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Contact Id (count)": "# of Contacts"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Initiation Method"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 3,
+        "y": 4
+      },
+      "id": 55,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Not Queued ",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": false
+                  }
+                },
+                "fieldName": "Queued"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": []
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Queued": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 5,
+        "y": 4
+      },
+      "id": 62,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Abandon",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "SHORT ABANDONED"
+                  }
+                },
+                "fieldName": "SLAStatus"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "LONG ABANDONED"
+                  }
+                },
+                "fieldName": "SLAStatus"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": []
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Answer SLA Violation": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Within SLA": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "Answered, Disconnected / Completed",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 2,
+        "x": 7,
+        "y": 4
+      },
+      "id": 53,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Handled",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": true
+                  }
+                },
+                "fieldName": "Queued"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "DISCONNECTED"
+                  }
+                },
+                "fieldName": "Status"
+              },
+              {
+                "config": {
+                  "id": "isNotNull",
+                  "options": {}
+                },
+                "fieldName": "Queue To Answer Secs"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": []
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Queued": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "dthms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 9,
+        "y": 4
+      },
+      "id": 38,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Avg Speed of Answer",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "isNotNull",
+                  "options": {}
+                },
+                "fieldName": "Queue To Answer Secs"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ]
+              },
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Answer Secs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Queue Wait Secs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Queue Wait Secs (mean)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "Calls answered within SLA / (Calls answered + Calls long abandoned)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0.8
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 0,
+        "y": 7
+      },
+      "id": 51,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Service Level",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": true
+                  }
+                },
+                "fieldName": "Within SLA"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Total Queued Records": {
+                "aggregations": [
+                  "firstNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "Total Records": {
+                "aggregations": []
+              },
+              "Total Records For SLA": {
+                "aggregations": [
+                  "firstNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "Within SLA": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Within SLA",
+                "Contact Id (distinctCount)",
+                "Total Records For SLA (firstNotNull)"
+              ]
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "Contact Id (distinctCount)",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "Total Records For SLA (firstNotNull)"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "Contact Id (distinctCount)",
+                "Total Records (firstNotNull)"
+              ],
+              "reducer": "diffperc"
+            },
+            "replaceFields": true
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 3,
+        "y": 7
+      },
+      "id": 57,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "In Queue Not Passed SLA",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "QUEUED AND NOT PASSED SLA"
+                  }
+                },
+                "fieldName": "SLAStatus"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": []
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Answer SLA Violation": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Within SLA": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 6,
+        "y": 7
+      },
+      "id": 59,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Answered Within SLA",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "ANSWERED WITHIN SLA"
+                  }
+                },
+                "fieldName": "SLAStatus"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": []
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Answer SLA Violation": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Within SLA": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 9,
+        "y": 7
+      },
+      "id": 61,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Short Abandon",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "SHORT ABANDONED"
+                  }
+                },
+                "fieldName": "SLAStatus"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": []
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Answer SLA Violation": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Within SLA": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "Queues only appear if they have any contacts currently in Queue",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Avg. Queue Time"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 20
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "color"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Max Queue Time"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 60
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "unit",
+                "value": "dthms"
+              },
+              {
+                "id": "color"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Num Waiting"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 111
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Num Waiting"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 12,
+        "y": 7
+      },
+      "id": 50,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Waiting in Queue",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "isNotNull",
+                  "options": {}
+                },
+                "fieldName": "Queue Name"
+              },
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "QUEUED"
+                  }
+                },
+                "fieldName": "Status"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Current Queue Seconds": {
+                "aggregations": [
+                  "mean",
+                  "max"
+                ],
+                "operation": "aggregate"
+              },
+              "Name": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Name": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Total Records": {
+                "aggregations": []
+              },
+              "Total Records in Queue": {
+                "aggregations": [
+                  "first"
+                ]
+              },
+              "Within SLA": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Contact Id (distinctCount)": false,
+              "Total Records in Queue (first)": true,
+              "Within SLA": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Contact Id (distinctCount)": "Contacts",
+              "Contact Id (distinctCount) / Total Records in Queue (first)": "SLA",
+              "Current Queue Seconds (max)": "Max Queue Time",
+              "Current Queue Seconds (mean)": "Avg. Queue Time"
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Queue Name"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "Queues do appear if their SLA is 0. Each Queue need at least one contact within the Service Level to be in the list.   ",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0.8
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SLA"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.8
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Queue Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 185
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 20,
+        "y": 7
+      },
+      "id": 49,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Queue Service Levels",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": true
+                  }
+                },
+                "fieldName": "Within SLA"
+              },
+              {
+                "config": {
+                  "id": "isNotNull",
+                  "options": {}
+                },
+                "fieldName": "Queue Name"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Name": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Name": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Total Records": {
+                "aggregations": []
+              },
+              "Total Records in Queue": {
+                "aggregations": [
+                  "first"
+                ],
+                "operation": "aggregate"
+              },
+              "Total Records in Queue For SLA": {
+                "aggregations": [
+                  "firstNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "Within SLA": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": "Contact Id (distinctCount)",
+              "operator": "/",
+              "reducer": "sum",
+              "right": "Total Records in Queue For SLA (firstNotNull)"
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "Contact Id (distinctCount)",
+                "Total Records in Queue (first)"
+              ],
+              "reducer": "sum"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Contact Id (distinctCount)": true,
+              "Total Records in Queue (first)": true,
+              "Total Records in Queue For SLA (firstNotNull)": true,
+              "Within SLA": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Contact Id (distinctCount)": "Within SLA Number of Contacts",
+              "Contact Id (distinctCount) / Total Records in Queue (first)": "SLA",
+              "Contact Id (distinctCount) / Total Records in Queue For SLA (firstNotNull)": "SLA",
+              "Total Records in Queue For SLA (firstNotNull)": ""
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "Queue Name"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 3,
+        "y": 10
+      },
+      "id": 56,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "In Queue Passed SLA",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "QUEUED AND PASSED SLA"
+                  }
+                },
+                "fieldName": "SLAStatus"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": []
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Answer SLA Violation": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Within SLA": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 6,
+        "y": 10
+      },
+      "id": 58,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Not Answered Within SLA",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "ANSWERED NOT WITHIN SLA"
+                  }
+                },
+                "fieldName": "SLAStatus"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": []
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Answer SLA Violation": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Within SLA": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 10000,
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 9,
+        "y": 10
+      },
+      "id": 60,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 30,
+          "refId": "A"
+        }
+      ],
+      "title": "Long Abandon",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "LONG ABANDONED"
+                  }
+                },
+                "fieldName": "SLAStatus"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Contact Id": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "Entity Type": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Queue Abandon": {
+                "aggregations": []
+              },
+              "Queue Abandon Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Abandon Secs": {
+                "aggregations": [
+                  "mean"
+                ]
+              },
+              "Queue Answer": {
+                "aggregations": []
+              },
+              "Queue Answer Beyond Treshold": {
+                "aggregations": []
+              },
+              "Queue Answer SLA Violation": {
+                "aggregations": []
+              },
+              "QueueAbandon": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "QueueAbandonSecs": {
+                "aggregations": [
+                  "mean"
+                ],
+                "operation": "aggregate"
+              },
+              "Within SLA": {
+                "aggregations": []
+              }
+            }
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Contact Id (distinctCount)"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-timestream-datasource",
+        "uid": "${DS_AMAZON_TIMESTREAM}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Current Queue Seconds"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Queue Wait Secs"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dthms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Queue Abandon Secs"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "SLAStatus"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 199
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "ANSWERED NOT WITHIN SLA": {
+                        "color": "red",
+                        "index": 4
+                      },
+                      "ANSWERED WITHIN SLA": {
+                        "color": "green",
+                        "index": 0
+                      },
+                      "LONG ABANDONED": {
+                        "color": "red",
+                        "index": 3
+                      },
+                      "NOT QUEUED": {
+                        "color": "#a0a59f",
+                        "index": 1
+                      },
+                      "QUEUED AND PASSED SLA": {
+                        "color": "orange",
+                        "index": 2
+                      },
+                      "SHORT ABANDONED": {
+                        "color": "yellow",
+                        "index": 5
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 30,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-timestream-datasource",
+            "uid": "${DS_AMAZON_TIMESTREAM}"
+          },
+          "measure": "",
+          "rawQuery": "WITH \nQueueBaseQuery AS (\n    SELECT Name, QueueArn, ROW_NUMBER() OVER (PARTITION BY \"QueueArn\" ORDER BY time desc) AS seqnum \n    FROM \"$DatabaseName\".\"Queue\" \n    GROUP BY time, Name, QueueArn\n),\nQueueNameQuery AS (\n    SELECT Name, QueueArn FROM QueueBaseQuery\n    WHERE seqnum =1\n),\nInstanceBaseQuery AS (\n    SELECT InstanceAlias, Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"ConnectRealTime\".\"Instance\" \n    GROUP BY time, InstanceAlias, Arn\n),\nInstanceAliasQuery AS (\n    SELECT InstanceAlias, Arn FROM InstanceBaseQuery\n    WHERE seqnum =1\n),\nBaseContactQuery AS (\n    SELECT \n        time, \n        contactId , \n        channel ,\n        queueInfo_queueArn, \n        eventType,\n        initiationMethod,\n        queueInfo_enqueueTimestamp,\n        previousContactId,\n        disconnectTimestamp,\n        instanceArn,\n        date_diff('second',  from_iso8601_timestamp(eventsourcetable.queueInfo_enqueueTimestamp), from_iso8601_timestamp(eventsourcetable.disconnectTimestamp)) \"Queue To Disconnect Secs\",\n        date_diff('second',  from_iso8601_timestamp(eventsourcetable.queueInfo_enqueueTimestamp), from_iso8601_timestamp(eventsourcetable.agentInfo_connectedToAgentTimestamp)) \"Queue To Answer Secs\" ,\n\n            ROW_NUMBER() OVER (PARTITION BY \"contactId\" ORDER BY time desc) AS seqnum \n    FROM \"$DatabaseName\".\"ContactEvent\" eventsourcetable\n    WHERE \n        time BETWEEN from_milliseconds(${__from}) AND from_milliseconds(${__to})  \n        AND \"measure_name\" = 'ContactEvent'\n        AND \"channel\" IN ($Channel)\n        AND \"initiationMethod\" IN ($InitiationMethod)\n),\nContactQuery AS (\nSELECT \n    eventsource.time \"Time\",\n    eventsource.contactId \"Contact Id\", \n    eventsource.channel \"Channel\",\n    queuenames.Name \"Queue Name\", \n   \tinstance.InstanceAlias \"Instance Alias\",\n   eventsource.eventType \"Status\",\n    eventsource.initiationMethod \"Initiation Method\",\n    CASE\n        WHEN (  eventsource.\"Queue To Answer Secs\" IS NOT NULL )\n            THEN eventsource.\"Queue To Answer Secs\"\n        ELSE \n            eventsource.\"Queue To Disconnect Secs\"\n    END  \"Queue Wait Secs\",  \n    eventsource.\"Queue To Answer Secs\" \"Queue To Answer Secs\",\n    eventsource.\"Queue To Disconnect Secs\" \"Queue To Disconnect Secs\",\n    CASE\n        WHEN (  eventsource.eventType = 'QUEUED' )\n            THEN date_diff('second',  from_iso8601_timestamp(eventsource.queueInfo_enqueueTimestamp), now())\n        ELSE NULL\n    END \"Current Queue Seconds\" , \n    CASE\n        WHEN (  eventsource.queueInfo_queueArn is NULL )\n            THEN false\n        ELSE true\n    END \"Queued\" ,    \n\n\n    eventsource.previousContactId \"Previous Contact Id\",\n\n    CASE\n        WHEN (  eventsource.initiationMethod IN ('CALLBACK') )\n            THEN 'FOLLOWER'\n        WHEN (  nextContact.channel <> 'TASK' AND nextContact.initiationMethod IS NOT NULL )\n            THEN 'FOLLOWED'\n        WHEN (  eventsource.queueInfo_queueArn IS NULL )\n            THEN 'NOT QUEUED'\n        WHEN (  eventsource.eventType = 'QUEUED'  AND  (date_diff('second',  from_iso8601_timestamp(eventsource.queueInfo_enqueueTimestamp), now())>=$SLATresholdSecs))\n            THEN 'QUEUED AND PASSED SLA'\n        WHEN (  eventsource.eventType = 'QUEUED'  AND  (date_diff('second',  from_iso8601_timestamp(eventsource.queueInfo_enqueueTimestamp), now()) < $SLATresholdSecs))\n            THEN 'QUEUED AND NOT PASSED SLA'\n        WHEN  (eventsource.\"Queue To Answer Secs\" IS NULL ) AND (eventsource.\"Queue To Disconnect Secs\" >= 0 ) AND (eventsource.\"Queue To Disconnect Secs\" < $SLAMinQueueSecs ) -- Abondened before waiting min wait time  \n            THEN 'SHORT ABANDONED'\n        WHEN  (eventsource.\"Queue To Answer Secs\" IS NULL ) AND (eventsource.\"Queue To Disconnect Secs\" >= $SLAMinQueueSecs )  \n            THEN 'LONG ABANDONED'\n        WHEN  (eventsource.\"Queue To Answer Secs\" >= $SLATresholdSecs ) -- Answered before treshold \n            THEN 'ANSWERED NOT WITHIN SLA'\n        WHEN  (eventsource.\"Queue To Answer Secs\" < $SLATresholdSecs ) -- Answered before treshold \n            THEN 'ANSWERED WITHIN SLA'\n        ELSE 'UNCATEGORIZED'\n    END \"SLAStatus\" ,\n    nextContact.initiationMethod \"Follower Method\",\n    'Contact' \"Entity Type\"\nFROM BaseContactQuery eventsource \n    LEFT JOIN QueueNameQuery queuenames\n    ON eventsource.queueInfo_queueArn = queuenames.QueueArn\n    LEFT JOIN BaseContactQuery nextContact\n    ON eventsource.contactId = nextContact.previousContactId AND nextContact.seqnum =1  AND nextContact.channel<>'TASK'\n\tLEFT JOIN InstanceAliasQuery instance\n    ON eventsource.instanceArn = instance.Arn\nWHERE \n    eventsource.seqnum =1 \n    AND  COALESCE(queuenames.Name,'<None>')  IN ($QueueName) \n    AND instance.InstanceAlias IN ($InstanceAlias)\n    AND eventsource.eventType IN ($Status)\nORDER BY eventsource.time DESC\n) \n\nSelect cq.*, \n    (select count (distinct (\"Contact Id\")) from ContactQuery  ) \"Total Records\" , \n        CASE\n        WHEN ( cq.\"SLAStatus\" IN ('ANSWERED WITHIN SLA') )\n            THEN true\n        WHEN ( cq.\"SLAStatus\" IN ('LONG ABANDONED','ANSWERED NOT WITHIN SLA') ) -- 'QUEUED AND PASSED SLA', can be added for queued items \n            THEN false\n        ELSE NULL\n    END \"Within SLA\",\n    (select count (distinct (\"Contact Id\")) from ContactQuery icq \n        Where icq.\"SLAStatus\" IN ('LONG ABANDONED','ANSWERED NOT WITHIN SLA','ANSWERED WITHIN SLA') -- 'QUEUED AND PASSED SLA', can be added for queued items \n    ) \"Total Records For SLA\" , \n    (select count (distinct (\"Contact Id\")) from ContactQuery icq \n        Where icq.\"Queue Name\" = cq.\"Queue Name\" and icq.\"SLAStatus\" IN ('LONG ABANDONED','ANSWERED NOT WITHIN SLA','ANSWERED WITHIN SLA')  -- 'QUEUED AND PASSED SLA', can be added for queued items \n    ) \"Total Records in Queue For SLA\"\nfrom ContactQuery cq\nORDER BY  cq.\"Time\" DESC\n\n\n\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Contacts",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Entity Type": true,
+              "FactorInToTotalRecordsInSLA": true,
+              "Instance Alias": true,
+              "Queue Abandon After Min Wait": true,
+              "Queue Abandon Before Min Wait": true,
+              "Queue Answer SLA Violation": true,
+              "Queue To Answer Secs": true,
+              "Queue To Disconnect Secs": true,
+              "Queued": true,
+              "Total Queued Records": true,
+              "Total Records": true,
+              "Total Records For SLA": true,
+              "Total Records in Queue": true,
+              "Total Records in Queue For SLA": true,
+              "Within SLA": true
+            },
+            "indexByName": {
+              "Channel": 1,
+              "Contact Id": 0,
+              "Current Queue Seconds": 5,
+              "Entity Type": 10,
+              "Follower Method": 14,
+              "Initiation Method": 4,
+              "Previous Contact Id": 13,
+              "Queue Name": 2,
+              "Queue To Answer Secs": 17,
+              "Queue To Disconnect Secs": 18,
+              "Queue Wait Secs": 8,
+              "Queued": 6,
+              "SLAStatus": 7,
+              "Status": 3,
+              "Time": 15,
+              "Total Records": 11,
+              "Total Records For SLA": 12,
+              "Total Records in Queue For SLA": 16,
+              "Within SLA": 9
+            },
+            "renameByName": {
+              "Current Queue Seconds": "Current Queue Wait Time",
+              "Queue Wait Secs": "Queue Wait Time",
+              "SLAStatus": "SLA Sub Status"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 47,
+      "panels": [],
+      "title": "TimeSeries Analysis of Contact Events",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-timestream-datasource",
+        "uid": "${DS_AMAZON_TIMESTREAM}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 21
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "database": "\"test\"",
+          "datasource": {
+            "type": "grafana-timestream-datasource",
+            "uid": "${DS_AMAZON_TIMESTREAM}"
+          },
+          "measure": "statusname",
+          "rawQuery": "WITH \nQueueBaseQuery AS (\n    SELECT Name, QueueArn, ROW_NUMBER() OVER (PARTITION BY \"QueueArn\" ORDER BY time desc) AS seqnum \n    FROM \"$DatabaseName\".\"Queue\" \n    GROUP BY time, Name, QueueArn\n),\nQueueNameQuery AS (\n    SELECT Name, QueueArn FROM QueueBaseQuery\n    WHERE seqnum =1\n),\nInstanceBaseQuery AS (\n    SELECT InstanceAlias, Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"ConnectRealTime\".\"Instance\" \n    GROUP BY time, InstanceAlias, Arn\n),\nInstanceAliasQuery AS (\n    SELECT InstanceAlias, Arn FROM InstanceBaseQuery\n    WHERE seqnum =1\n),\nBaseContactQuery AS (\n    SELECT \n        time, \n        contactId , \n        channel ,\n        queueInfo_queueArn, \n        eventType,\n        initiationMethod,\n        queueInfo_enqueueTimestamp,\n        previousContactId,\n        disconnectTimestamp,       \n        instanceArn,\n        date_diff('second',  from_iso8601_timestamp(eventsourcetable.queueInfo_enqueueTimestamp), from_iso8601_timestamp(eventsourcetable.disconnectTimestamp)) \"Queue Abandon Secs\",\n        date_diff('second',  from_iso8601_timestamp(eventsourcetable.queueInfo_enqueueTimestamp), from_iso8601_timestamp(eventsourcetable.agentInfo_connectedToAgentTimestamp)) \"Queue Answer Secs\" ,\n\n            ROW_NUMBER() OVER (PARTITION BY \"contactId\" ORDER BY time desc) AS seqnum \n    FROM \"$DatabaseName\".\"ContactEvent\" eventsourcetable\n    WHERE \n        time BETWEEN from_milliseconds(${__from}) AND from_milliseconds(${__to})  \n        AND \"measure_name\" = 'ContactEvent'\n        AND \"channel\" IN ($Channel)\n        AND \"initiationMethod\" IN ($InitiationMethod)\n),\nContactQuery AS (\nSELECT \n    eventsource.time ,\n    eventsource.contactId \"Contact Id\", \n    eventsource.channel \"Channel\",\n    queuenames.Name \"Queue Name\", \n    instance.InstanceAlias \"Instance Alias\",\n    eventsource.eventType \"Status\",\n    eventsource.initiationMethod \"Initiation Method\",\n    eventsource.\"Queue Answer Secs\" \"Queue Answer Secs\",\n    eventsource.\"Queue Abandon Secs\" \"Queue Abandon Secs\",\n    CASE\n        WHEN (  eventsource.eventType = 'QUEUED' )\n            THEN date_diff('second',  from_iso8601_timestamp(eventsource.queueInfo_enqueueTimestamp), now())\n        ELSE NULL\n    END \"Current Queue Seconds\" , \n    CASE\n        WHEN (  eventsource.queueInfo_queueArn is NULL )\n            THEN false\n        ELSE true\n    END \"Queued\" ,    \n\n\n    eventsource.previousContactId \"Previous Contact Id\",\n\n    CASE\n        WHEN (  eventsource.initiationMethod IN ('CALLBACK') )\n            THEN 'FOLLOWER'\n        WHEN (  nextContact.initiationMethod IS NOT NULL )\n            THEN 'FOLLOWED'\n        WHEN (  eventsource.queueInfo_queueArn IS NULL )\n            THEN 'NOT QUEUED'\n        WHEN (  eventsource.eventType = 'QUEUED'  AND  (date_diff('second',  from_iso8601_timestamp(eventsource.queueInfo_enqueueTimestamp), now())>=$SLATresholdSecs))\n            THEN 'QUEUED AND PASSED SLA'\n        WHEN (  eventsource.eventType = 'QUEUED'  AND  (date_diff('second',  from_iso8601_timestamp(eventsource.queueInfo_enqueueTimestamp), now()) < $SLATresholdSecs))\n            THEN 'QUEUED AND NOT PASSED SLA'\n        WHEN  (eventsource.\"Queue Answer Secs\" IS NULL ) AND (eventsource.\"Queue Abandon Secs\" > 0 ) AND (eventsource.\"Queue Abandon Secs\" < $SLAMinQueueSecs ) -- Abondened before waiting min wait time  \n            THEN 'SHORT ABANDONED'\n        WHEN  (eventsource.\"Queue Answer Secs\" IS NULL ) AND (eventsource.\"Queue Abandon Secs\" >= $SLAMinQueueSecs )  \n            THEN 'LONG ABANDONED'\n        WHEN  (eventsource.\"Queue Answer Secs\" >= $SLATresholdSecs ) -- Answered before treshold \n            THEN 'ANSWERED NOT WITHIN SLA'\n        WHEN  (eventsource.\"Queue Answer Secs\" < $SLATresholdSecs ) -- Answered before treshold \n            THEN 'ANSWERED WITHIN SLA'\n        ELSE 'UNCATEGORIZED'\n    END \"SLAStatus\" ,\n    nextContact.initiationMethod \"Follower Method\",\n    'Contact' \"Entity Type\"\nFROM BaseContactQuery eventsource \n    LEFT JOIN QueueNameQuery queuenames\n    ON eventsource.queueInfo_queueArn = queuenames.QueueArn\n    LEFT JOIN BaseContactQuery nextContact\n    ON eventsource.contactId = nextContact.previousContactId AND nextContact.seqnum =1  \n    LEFT JOIN InstanceAliasQuery instance\n    ON eventsource.instanceArn = instance.Arn\n\nWHERE \n     COALESCE(queuenames.Name,'<None>')  IN ($QueueName) \n    AND instance.InstanceAlias IN ($InstanceAlias)\n    AND eventsource.eventType IN ($Status)\nORDER BY eventsource.time DESC\n) ,\n\n\n\n\n\n\nBaseBinning AS (\nSELECT \n\tBIN(time, greatest($__interval_ms,5m)) binned_timestamp,\n    \"Contact Id\",\n    \"Status\"\nFROM ContactQuery eventsourcetable\nWHERE \n    COALESCE(\"Queue Name\",'<None>')  IN ($QueueName) \nGroup by BIN(time, greatest($__interval_ms,5m)),  \"Contact Id\",\"Status\"\n),\n\nCountUsersInBins AS (\nSELECT \n\tbinned_timestamp,\n   \"Status\",\n\tcount (distinct \"Contact Id\") \"Number of Contacts\"\nFROM BaseBinning\nGROUP BY binned_timestamp, \"Status\"\n)\n\nSELECT \n\"Status\", CREATE_TIME_SERIES (binned_timestamp,\"Number of Contacts\") \"Num of\"\nFROM CountUsersInBins\nGROUP by \"Status\"\nORDER By \"Status\"\n\n\n\n",
+          "refId": "A",
+          "table": "\"Table1\""
+        }
+      ],
+      "title": "Contact Status Timeseries Analysis",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-timestream-datasource",
+        "uid": "${DS_AMAZON_TIMESTREAM}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 21
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "database": "\"test\"",
+          "datasource": {
+            "type": "grafana-timestream-datasource",
+            "uid": "${DS_AMAZON_TIMESTREAM}"
+          },
+          "measure": "statusname",
+          "rawQuery": "WITH \nQueueBaseQuery AS (\n    SELECT Name, QueueArn, ROW_NUMBER() OVER (PARTITION BY \"QueueArn\" ORDER BY time desc) AS seqnum \n    FROM \"$DatabaseName\".\"Queue\" \n    GROUP BY time, Name, QueueArn\n),\nQueueNameQuery AS (\n    SELECT Name, QueueArn FROM QueueBaseQuery\n    WHERE seqnum =1\n),\nInstanceBaseQuery AS (\n    SELECT InstanceAlias, Arn, ROW_NUMBER() OVER (PARTITION BY \"Arn\" ORDER BY time desc) AS seqnum \n    FROM \"ConnectRealTime\".\"Instance\" \n    GROUP BY time, InstanceAlias, Arn\n),\nInstanceAliasQuery AS (\n    SELECT InstanceAlias, Arn FROM InstanceBaseQuery\n    WHERE seqnum =1\n),\nBaseContactQuery AS (\n    SELECT \n        time, \n        contactId , \n        channel ,\n        queueInfo_queueArn, \n        eventType,\n        initiationMethod,\n        queueInfo_enqueueTimestamp,\n        previousContactId,\n        disconnectTimestamp,       \n        instanceArn,\n        date_diff('second',  from_iso8601_timestamp(eventsourcetable.queueInfo_enqueueTimestamp), from_iso8601_timestamp(eventsourcetable.disconnectTimestamp)) \"Queue Abandon Secs\",\n        date_diff('second',  from_iso8601_timestamp(eventsourcetable.queueInfo_enqueueTimestamp), from_iso8601_timestamp(eventsourcetable.agentInfo_connectedToAgentTimestamp)) \"Queue Answer Secs\" ,\n\n            ROW_NUMBER() OVER (PARTITION BY \"contactId\" ORDER BY time desc) AS seqnum \n    FROM \"$DatabaseName\".\"ContactEvent\" eventsourcetable\n    WHERE \n        time BETWEEN from_milliseconds(${__from}) AND from_milliseconds(${__to})  \n        AND \"measure_name\" = 'ContactEvent'\n        AND \"channel\" IN ($Channel)\n        AND \"initiationMethod\" IN ($InitiationMethod)\n),\nContactQuery AS (\nSELECT \n    eventsource.time ,\n    eventsource.contactId \"Contact Id\", \n    eventsource.channel \"Channel\",\n    queuenames.Name \"Queue Name\", \n    instance.InstanceAlias \"Instance Alias\",\n    eventsource.eventType \"Status\",\n    eventsource.initiationMethod \"Initiation Method\",\n    eventsource.\"Queue Answer Secs\" \"Queue Answer Secs\",\n    eventsource.\"Queue Abandon Secs\" \"Queue Abandon Secs\",\n    CASE\n        WHEN (  eventsource.eventType = 'QUEUED' )\n            THEN date_diff('second',  from_iso8601_timestamp(eventsource.queueInfo_enqueueTimestamp), now())\n        ELSE NULL\n    END \"Current Queue Seconds\" , \n    CASE\n        WHEN (  eventsource.queueInfo_queueArn is NULL )\n            THEN false\n        ELSE true\n    END \"Queued\" ,    \n\n\n    eventsource.previousContactId \"Previous Contact Id\",\n\n    CASE\n        WHEN (  eventsource.initiationMethod IN ('CALLBACK') )\n            THEN 'FOLLOWER'\n        WHEN (  nextContact.initiationMethod IS NOT NULL )\n            THEN 'FOLLOWED'\n        WHEN (  eventsource.queueInfo_queueArn IS NULL )\n            THEN 'NOT QUEUED'\n        WHEN (  eventsource.eventType = 'QUEUED'  AND  (date_diff('second',  from_iso8601_timestamp(eventsource.queueInfo_enqueueTimestamp), now())>=$SLATresholdSecs))\n            THEN 'QUEUED AND PASSED SLA'\n        WHEN (  eventsource.eventType = 'QUEUED'  AND  (date_diff('second',  from_iso8601_timestamp(eventsource.queueInfo_enqueueTimestamp), now()) < $SLATresholdSecs))\n            THEN 'QUEUED AND NOT PASSED SLA'\n        WHEN  (eventsource.\"Queue Answer Secs\" IS NULL ) AND (eventsource.\"Queue Abandon Secs\" > 0 ) AND (eventsource.\"Queue Abandon Secs\" < $SLAMinQueueSecs ) -- Abondened before waiting min wait time  \n            THEN 'SHORT ABANDONED'\n        WHEN  (eventsource.\"Queue Answer Secs\" IS NULL ) AND (eventsource.\"Queue Abandon Secs\" >= $SLAMinQueueSecs )  \n            THEN 'LONG ABANDONED'\n        WHEN  (eventsource.\"Queue Answer Secs\" >= $SLATresholdSecs ) -- Answered before treshold \n            THEN 'ANSWERED NOT WITHIN SLA'\n        WHEN  (eventsource.\"Queue Answer Secs\" < $SLATresholdSecs ) -- Answered before treshold \n            THEN 'ANSWERED WITHIN SLA'\n        ELSE 'UNCATEGORIZED'\n    END \"SLAStatus\" ,\n    nextContact.initiationMethod \"Follower Method\",\n    'Contact' \"Entity Type\"\nFROM BaseContactQuery eventsource \n    LEFT JOIN QueueNameQuery queuenames\n    ON eventsource.queueInfo_queueArn = queuenames.QueueArn\n    LEFT JOIN BaseContactQuery nextContact\n    ON eventsource.contactId = nextContact.previousContactId AND nextContact.seqnum =1  \n    LEFT JOIN InstanceAliasQuery instance\n    ON eventsource.instanceArn = instance.Arn\nWHERE \n     COALESCE(queuenames.Name,'<None>')  IN ($QueueName) \n    AND eventsource.eventType IN ($Status)\n    AND instance.InstanceAlias IN ($InstanceAlias)\nORDER BY eventsource.time DESC\n) ,\n\n\n\n\n\nBaseBinning AS (\nSELECT \n    BIN(time, greatest($__interval_ms,5m)) binned_timestamp,\n    \"SLAStatus\",\n    count  (distinct \"Contact Id\") \"SLAStatusCount\"\n\nFROM ContactQuery \nWHERE \n    COALESCE(\"Queue Name\",'<None>')  IN ($QueueName) \n\nGROUP BY BIN(time, greatest($__interval_ms,5m)),  \"SLAStatus\"\n),\n\nCountInBins AS (\nSELECT \n    binned_timestamp,\"SLAStatus\",\n    SUM (\"SLAStatusCount\") \"Number of Status Occurance\"\nFROM BaseBinning\nGROUP BY binned_timestamp,\"SLAStatus\"\n)\nSELECT \n    \"SLAStatus\",\n    CREATE_TIME_SERIES (binned_timestamp,\"Number of Status Occurance\") \"Num Of\"\nFROM CountInBins\nGROUP BY \"SLAStatus\"\nORDER BY \"SLAStatus\"",
+          "refId": "A",
+          "table": "\"Table1\""
+        }
+      ],
+      "title": "Service Level Metrics Count Timeseries Analysis",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "5s",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "ConnectContactEvents"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-timestream-datasource",
+          "uid": "${DS_AMAZON_TIMESTREAM}"
+        },
+        "definition": "SELECT distinct  (\"InstanceAlias\")\nFROM \"$DatabaseName\".\"Instance\" ",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Instance",
+        "multi": true,
+        "name": "InstanceAlias",
+        "options": [],
+        "query": "SELECT distinct  (\"InstanceAlias\")\nFROM \"$DatabaseName\".\"Instance\" ",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "ConnectRealTime",
+          "value": "ConnectRealTime"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": "DatabaseName",
+        "multi": false,
+        "name": "DatabaseName",
+        "options": [
+          {
+            "selected": true,
+            "text": "ConnectRealTime",
+            "value": "ConnectRealTime"
+          }
+        ],
+        "query": "ConnectRealTime",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "hide": 0,
+        "includeAll": true,
+        "label": "Channel Name",
+        "multi": true,
+        "name": "Channel",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "VOICE",
+            "value": "VOICE"
+          },
+          {
+            "selected": false,
+            "text": "CHAT",
+            "value": "CHAT"
+          },
+          {
+            "selected": false,
+            "text": "TASK",
+            "value": "TASK"
+          }
+        ],
+        "query": "VOICE, CHAT, TASK",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "hide": 0,
+        "includeAll": true,
+        "label": "Initiation Method",
+        "multi": true,
+        "name": "InitiationMethod",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "INBOUND",
+            "value": "INBOUND"
+          },
+          {
+            "selected": false,
+            "text": "OUTBOUND",
+            "value": "OUTBOUND"
+          },
+          {
+            "selected": false,
+            "text": "TRANSFER",
+            "value": "TRANSFER"
+          },
+          {
+            "selected": false,
+            "text": "CALLBACK",
+            "value": "CALLBACK"
+          },
+          {
+            "selected": false,
+            "text": "API",
+            "value": "API"
+          },
+          {
+            "selected": false,
+            "text": "QUEUE_TRANSFER",
+            "value": "QUEUE_TRANSFER"
+          },
+          {
+            "selected": false,
+            "text": "EXTERNAL_OUTBOUND",
+            "value": "EXTERNAL_OUTBOUND"
+          },
+          {
+            "selected": false,
+            "text": "MONITOR",
+            "value": "MONITOR"
+          },
+          {
+            "selected": false,
+            "text": "DISCONNECT",
+            "value": "DISCONNECT"
+          }
+        ],
+        "query": "INBOUND,\nOUTBOUND,\nTRANSFER,\nCALLBACK,\nAPI,\nQUEUE_TRANSFER,\nEXTERNAL_OUTBOUND,\nMONITOR,\nDISCONNECT",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "hide": 0,
+        "includeAll": true,
+        "label": "Status",
+        "multi": true,
+        "name": "Status",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "INITIATED",
+            "value": "INITIATED"
+          },
+          {
+            "selected": false,
+            "text": "CONNECTED_TO_SYSTEM",
+            "value": "CONNECTED_TO_SYSTEM"
+          },
+          {
+            "selected": false,
+            "text": "QUEUED",
+            "value": "QUEUED"
+          },
+          {
+            "selected": false,
+            "text": "CONNECTED_TO_AGENT",
+            "value": "CONNECTED_TO_AGENT"
+          },
+          {
+            "selected": false,
+            "text": "DISCONNECTED",
+            "value": "DISCONNECTED"
+          },
+          {
+            "selected": false,
+            "text": "HUMAN_ANSWERED",
+            "value": "HUMAN_ANSWERED"
+          },
+          {
+            "selected": false,
+            "text": "VOICEMAIL_BEEP",
+            "value": "VOICEMAIL_BEEP"
+          },
+          {
+            "selected": false,
+            "text": "VOICEMAIL_NO_BEEP",
+            "value": "VOICEMAIL_NO_BEEP"
+          },
+          {
+            "selected": false,
+            "text": "AMD_UNANSWERED",
+            "value": "AMD_UNANSWERED"
+          },
+          {
+            "selected": false,
+            "text": "AMD_UNRESOLVED",
+            "value": "AMD_UNRESOLVED"
+          },
+          {
+            "selected": false,
+            "text": "SIT_TONE_BUSY",
+            "value": "SIT_TONE_BUSY"
+          },
+          {
+            "selected": false,
+            "text": "SIT_TONE_INVALID_NUMBER",
+            "value": "SIT_TONE_INVALID_NUMBER"
+          },
+          {
+            "selected": false,
+            "text": "SIT_TONE_DETECTED",
+            "value": "SIT_TONE_DETECTED"
+          },
+          {
+            "selected": false,
+            "text": "FAX_MACHINE_DETECTED",
+            "value": "FAX_MACHINE_DETECTED"
+          },
+          {
+            "selected": false,
+            "text": "AMD_ERROR",
+            "value": "AMD_ERROR"
+          }
+        ],
+        "query": "INITIATED,\nCONNECTED_TO_SYSTEM,\nQUEUED,\nCONNECTED_TO_AGENT,\nDISCONNECTED,\nHUMAN_ANSWERED,\nVOICEMAIL_BEEP,\nVOICEMAIL_NO_BEEP,\nAMD_UNANSWERED,\nAMD_UNRESOLVED,\nSIT_TONE_BUSY,\nSIT_TONE_INVALID_NUMBER,\nSIT_TONE_DETECTED,\nFAX_MACHINE_DETECTED,\nAMD_ERROR",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-timestream-datasource",
+          "uid": "${DS_AMAZON_TIMESTREAM}"
+        },
+        "definition": "SELECT distinct  (\"Name\")\nFROM \"$DatabaseName\".\"Queue\",\"$DatabaseName\".\"Instance\"  \nWhere \"Queue\".\"QueueArn\" like Concat(\"Instance\".\"Arn\", '%') \nAND \"Instance\".\"InstanceAlias\" IN (${InstanceAlias:sqlstring})\nUNION \nSelect '<None>'",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Queue Name",
+        "multi": true,
+        "name": "QueueName",
+        "options": [],
+        "query": "SELECT distinct  (\"Name\")\nFROM \"$DatabaseName\".\"Queue\",\"$DatabaseName\".\"Instance\"  \nWhere \"Queue\".\"QueueArn\" like Concat(\"Instance\".\"Arn\", '%') \nAND \"Instance\".\"InstanceAlias\" IN (${InstanceAlias:sqlstring})\nUNION \nSelect '<None>'",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "20",
+          "value": "20"
+        },
+        "description": "Custom treshold for SLA calculations below ",
+        "hide": 0,
+        "label": "SLA Treshold Secs",
+        "name": "SLATresholdSecs",
+        "options": [
+          {
+            "selected": true,
+            "text": "20",
+            "value": "20"
+          }
+        ],
+        "query": "20",
+        "skipUrlSync": false,
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "0",
+          "value": "0"
+        },
+        "description": "Amount of time, a contact needs to spend waiting in the queue to be considered abandoning the queue in case contact abandons. This is to eliminate short-abandon values from SLA calculation. ",
+        "hide": 0,
+        "label": "Queue short abandon (Secs)",
+        "name": "SLAMinQueueSecs",
+        "options": [
+          {
+            "selected": true,
+            "text": "0",
+            "value": "0"
+          }
+        ],
+        "query": "0",
+        "skipUrlSync": false,
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h"
+    ]
+  },
+  "timezone": "",
+  "title": "Contact Events",
+  "uid": "3YjzxKzSz",
+  "version": 105,
+  "weekStart": ""
+}

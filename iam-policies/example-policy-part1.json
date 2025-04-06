@@ -144,7 +144,8 @@
         "arn:aws:iam::*:role/connect-kinesis-role",
         "arn:aws:iam::*:role/glue-crawler-role",
         "arn:aws:iam::*:role/firehose-role",
-        "arn:aws:iam::*:role/grafana-instance-role"
+        "arn:aws:iam::*:role/grafana-instance-role",
+        "arn:aws:iam::*:role/AWSServiceRoleForAmazonConnect*"
       ],
       "Condition": {
         "StringLike": {
@@ -156,6 +157,17 @@
           ]
         }
       }
+    },
+    {
+      "Sid": "AllowServiceLinkedRoleManagement",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateServiceLinkedRole",
+        "iam:DeleteServiceLinkedRole",
+        "iam:PutRolePolicy",
+        "iam:UpdateRoleDescription"
+      ],
+      "Resource": "arn:aws:iam::*:role/aws-service-role/connect.amazonaws.com/AWSServiceRoleForAmazonConnect*"
     }
   ]
 }

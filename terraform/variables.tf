@@ -6,7 +6,7 @@
 variable "aws_region" {
   description = "The AWS region to deploy resources"
   type        = string
-  default     = "eu-west-2"
+  default     = "eu-west-1"  # Changed from eu-west-2 to eu-west-1 for Timestream compatibility
 }
 
 variable "environment" {

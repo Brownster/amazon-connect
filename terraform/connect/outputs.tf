@@ -38,6 +38,21 @@ output "connect_agents" {
   value       = var.create_test_agents ? keys(aws_connect_user.agents) : []
 }
 
+output "connect_agent_details" {
+  description = "Detailed information about created agents"
+  value = var.create_test_agents ? {
+    for username, agent in aws_connect_user.agents : username => {
+      id              = agent.id
+      arn             = agent.arn
+      username        = agent.name
+      first_name      = agent.identity_info[0].first_name
+      last_name       = agent.identity_info[0].last_name
+      email           = agent.identity_info[0].email
+      routing_profile = agent.routing_profile_id
+    }
+  } : {}
+}
+
 output "contact_flows" {
   description = "Map of contact flow names to flow IDs"
   value       = { 

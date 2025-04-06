@@ -8,7 +8,7 @@
 
 # Define the AWS provider and region
 provider "aws" {
-  region = "eu-west-2"
+  region = "eu-west-1"  # Ireland region
   # Uncomment and fill in your credentials below
   # access_key = "your_access_key"
   # secret_key = "your_secret_key"
@@ -36,7 +36,7 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"              # Define IP range for the subnet
-  availability_zone       = "eu-west-2a"               # Specify the availability zone
+  availability_zone       = "eu-west-1a"               # Specify the availability zone
   map_public_ip_on_launch = true                       # Automatically assign public IPs to instances
   
   tags = {
@@ -48,7 +48,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.2.0/24"              # Define IP range for the subnet
-  availability_zone = "eu-west-2a"               # Specify the availability zone
+  availability_zone = "eu-west-1a"               # Specify the availability zone
   
   tags = {
     Name = "connect-analytics-private"
@@ -123,6 +123,7 @@ resource "aws_kinesis_stream" "connect_ctr" {
   name             = "connect-ctr-stream"
   shard_count      = 1                # Number of shards (throughput units)
   retention_period = 24               # Data retention period in hours
+  enforce_consumer_deletion = true    # Delete consumers on stream deletion
   
   tags = {
     Name = "connect-ctr-stream"
@@ -413,7 +414,7 @@ resource "aws_security_group" "grafana" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Restrict this to your IP in production
+    cidr_blocks = ["0.0.0.0/0"] # TODO: Restrict this to your IP in production
   }
   
   # Allow Grafana web traffic from anywhere (restrict this in production)
@@ -421,7 +422,7 @@ resource "aws_security_group" "grafana" {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Restrict this to your IP in production
+    cidr_blocks = ["0.0.0.0/0"] # TODO: Restrict this to your IP in production
   }
   
   # Allow all outbound traffic
@@ -437,7 +438,7 @@ resource "aws_security_group" "grafana" {
 resource "aws_iam_role" "grafana_instance" {
   name = "grafana-instance-role"
   
-  # Trust policy allowing EC2 and self-assume
+  # Trust policy allowing EC2 service to assume this role
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -446,13 +447,6 @@ resource "aws_iam_role" "grafana_instance" {
         Effect = "Allow"
         Principal = {
           Service = "ec2.amazonaws.com"
-        }
-      },
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/grafana-instance-role"
         }
       }
     ]
