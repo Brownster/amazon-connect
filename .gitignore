@@ -37,3 +37,15 @@ init
 # Claude AI files
 CLAUDE.md
 claude.md
+
+# Working directory
+/working/
+
+# Temporary files
+*.plan
+tf.*.plan
+import_commands.txt
+
+# Timestream temporary files
+timestream_direct.tf
+timestream_fixed.tf

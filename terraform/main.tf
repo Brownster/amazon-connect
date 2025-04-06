@@ -26,7 +26,7 @@ module "networking" {
   vpc_cidr            = "10.0.0.0/16"
   public_subnet_cidr  = "10.0.1.0/24"
   private_subnet_cidr = "10.0.2.0/24"
-  availability_zone   = "eu-west-1a"  # Changed from eu-west-2a to eu-west-1a
+  availability_zone   = "eu-west-2a"  # Changed back to eu-west-2a for compatibility
   
   # Pass tags with module-specific prefix
   tags = merge(
@@ -113,6 +113,7 @@ module "timestream" {
   # Pass configuration to timestream module
   stack_name = var.project_name
   aws_region = var.aws_region
+  timestream_region = "eu-west-1"  # Explicitly set to a region where Timestream is supported
   existing_kinesis_stream_arn = module.data_pipeline.kinesis_stream_arn
   
   # Pass tags with module-specific prefix

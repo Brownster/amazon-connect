@@ -8,7 +8,7 @@
 
 # Define the AWS provider and region
 provider "aws" {
-  region = "eu-west-1"  # Ireland region
+  region = "eu-west-2"  # London region
   # Uncomment and fill in your credentials below
   # access_key = "your_access_key"
   # secret_key = "your_secret_key"
@@ -36,7 +36,7 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"              # Define IP range for the subnet
-  availability_zone       = "eu-west-1a"               # Specify the availability zone
+  availability_zone       = "eu-west-2a"               # Specify the availability zone
   map_public_ip_on_launch = true                       # Automatically assign public IPs to instances
   
   tags = {
@@ -48,7 +48,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.2.0/24"              # Define IP range for the subnet
-  availability_zone = "eu-west-1a"               # Specify the availability zone
+  availability_zone = "eu-west-2a"               # Specify the availability zone
   
   tags = {
     Name = "connect-analytics-private"
@@ -111,7 +111,7 @@ resource "aws_connect_instance" "instance" {
   auto_resolve_best_voices_enabled = true               # Use best voice based on caller location
   contact_flow_logs_enabled      = true                 # Enable logging of contact flows
   contact_lens_enabled           = true                 # Enable Contact Lens analytics
-  instance_alias                 = "thebrowns"          # Name for the Connect instance
+  instance_alias                 = "thebrowns-${random_string.suffix.result}"  # Name for the Connect instance
   multi_party_conference_enabled = true                 # Enable multi-party calls
 }
 
@@ -120,19 +120,19 @@ resource "aws_connect_instance" "instance" {
 # ===================================================================
 # Create a Kinesis Data Stream to receive Contact Trace Records (CTR) from Connect
 resource "aws_kinesis_stream" "connect_ctr" {
-  name             = "connect-ctr-stream"
+  name             = "connect-ctr-stream-${random_string.suffix.result}"
   shard_count      = 1                # Number of shards (throughput units)
   retention_period = 24               # Data retention period in hours
   enforce_consumer_deletion = true    # Delete consumers on stream deletion
   
   tags = {
-    Name = "connect-ctr-stream"
+    Name = "connect-ctr-stream-${random_string.suffix.result}"
   }
 }
 
 # IAM Role to allow Amazon Connect to write to the Kinesis stream
 resource "aws_iam_role" "connect_kinesis" {
-  name = "connect-kinesis-role"
+  name = "connect-kinesis-role-${random_string.suffix.result}"
   
   # Define which AWS services can assume this role
   assume_role_policy = jsonencode({
@@ -189,12 +189,12 @@ resource "aws_connect_instance_storage_config" "ctr_kinesis" {
 # ===================================================================
 # Create a Glue Catalog Database to store metadata about our data
 resource "aws_glue_catalog_database" "connect_db" {
-  name = "connect_ctr_database"  # Database name for querying with Athena
+  name = "connect_ctr_database_${random_string.suffix.result}"  # Database name for querying with Athena
 }
 
 # IAM Role for Glue Crawler to access S3 and catalog data
 resource "aws_iam_role" "glue_crawler" {
-  name = "glue-crawler-role"
+  name = "glue-crawler-role-${random_string.suffix.result}"
   
   # Allow Glue service to assume this role
   assume_role_policy = jsonencode({
@@ -239,7 +239,7 @@ resource "aws_s3_bucket_acl" "connect_ctr_data" {
 
 # IAM Role for Kinesis Firehose delivery stream
 resource "aws_iam_role" "firehose_role" {
-  name = "firehose-role"
+  name = "firehose-role-${random_string.suffix.result}"
   
   # Allow Firehose service to assume this role
   assume_role_policy = jsonencode({
@@ -361,7 +361,7 @@ resource "aws_glue_crawler" "connect_ctr" {
 
 # Create Athena workgroup for querying the data
 resource "aws_athena_workgroup" "connect_analytics" {
-  name = "connect-analytics"
+  name = "connect-analytics-${random_string.suffix.result}"
   
   configuration {
     enforce_workgroup_configuration    = true
@@ -399,13 +399,13 @@ resource "aws_s3_bucket_acl" "athena_results" {
 # ===================================================================
 # Create key pair for SSH access to the Grafana instance
 resource "aws_key_pair" "grafana" {
-  key_name   = "grafana-key-pair"
+  key_name   = "grafana-key-pair-${random_string.suffix.result}"
   public_key = file("${path.module}/grafana-key.pub")  # Use local SSH public key
 }
 
 # Security group for Grafana instance
 resource "aws_security_group" "grafana" {
-  name        = "grafana-sg"
+  name        = "grafana-sg-${random_string.suffix.result}"
   description = "Allow traffic for Grafana"
   vpc_id      = aws_vpc.main.id
   
@@ -436,7 +436,7 @@ resource "aws_security_group" "grafana" {
 
 # IAM Role for Grafana EC2 instance
 resource "aws_iam_role" "grafana_instance" {
-  name = "grafana-instance-role"
+  name = "grafana-instance-role-${random_string.suffix.result}"
   
   # Trust policy allowing EC2 service to assume this role
   assume_role_policy = jsonencode({
@@ -455,8 +455,35 @@ resource "aws_iam_role" "grafana_instance" {
 
 # IAM Instance Profile for attaching role to EC2
 resource "aws_iam_instance_profile" "grafana" {
-  name = "grafana-instance-profile"
+  name = "grafana-instance-profile-${random_string.suffix.result}"
   role = aws_iam_role.grafana_instance.name
+}
+
+# IAM Policy for Grafana to access Timestream in eu-west-1
+resource "aws_iam_role_policy" "grafana_timestream" {
+  name = "grafana-timestream-policy"
+  role = aws_iam_role.grafana_instance.id
+  
+  # Grant full permissions to Timestream
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "timestream:*"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:DescribeKey"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 # IAM Policy for Grafana to access Athena and S3

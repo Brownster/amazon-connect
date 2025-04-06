@@ -9,8 +9,14 @@ variable "stack_name" {
 }
 
 variable "aws_region" {
-  description = "AWS region where resources will be created"
+  description = "AWS region for Lambda resources (Connect in eu-west-2, Timestream in eu-west-1)"
   type        = string
+}
+
+variable "timestream_region" {
+  description = "AWS region for Timestream resources (must be a region where Timestream is supported)"
+  type        = string
+  default     = "eu-west-1"
 }
 
 variable "existing_kinesis_stream_arn" {

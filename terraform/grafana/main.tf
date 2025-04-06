@@ -162,27 +162,20 @@ resource "aws_iam_role_policy" "grafana_athena" {
   })
 }
 
-# IAM Policy for Grafana to access Timestream
+# IAM Policy for Grafana to access Timestream (in eu-west-1)
 resource "aws_iam_role_policy" "grafana_timestream" {
   name = "grafana-timestream-policy"
   role = aws_iam_role.grafana_instance.id
   
-  # Grant permissions to query Timestream
+  # Grant permissions to query Timestream - broad permissions as requested
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
+        Effect = "Allow",
         Action = [
-          "timestream:DescribeEndpoints",
-          "timestream:SelectValues",
-          "timestream:CancelQuery",
-          "timestream:ListDatabases",
-          "timestream:ListTables",
-          "timestream:ListMeasures",
-          "timestream:DescribeDatabase",
-          "timestream:DescribeTable"
-        ]
-        Effect   = "Allow"
+          "timestream:*"
+        ],
         Resource = "*"
       },
       {
@@ -514,7 +507,7 @@ AGENT_EVENTS_DASHBOARD
         "type": "grafana-timestream-datasource",
         "jsonData": {
           "authType": "default",
-          "defaultRegion": "${var.aws_region}",
+          "defaultRegion": "eu-west-1",
           "defaultDatabase": "${var.timestream_database_name}"
         },
         "access": "proxy",

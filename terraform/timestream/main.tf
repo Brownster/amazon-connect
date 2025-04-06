@@ -4,8 +4,16 @@
 # This file defines Amazon Timestream resources and related Lambda functions
 # for real-time monitoring of Amazon Connect data
 
+# Define the AWS provider for Timestream resources (defaults to eu-west-1)
+provider "aws" {
+  alias  = "timestream"
+  region = var.timestream_region  # Must be a region where Timestream is available
+}
+
 # Get current AWS account ID and region
-data "aws_caller_identity" "current" {}
+data "aws_caller_identity" "current" {
+  provider = aws.timestream
+}
 
 # Archive files for Lambda functions
 data "archive_file" "persist_agent_event_zip" {
@@ -32,6 +40,7 @@ data "archive_file" "persist_instance_data_zip" {
 
 # KMS Key for Timestream database encryption
 resource "aws_kms_key" "timestream_db_key" {
+  provider                = aws.timestream
   description             = "KMS Key for Timestream database ${var.stack_name}"
   key_usage               = "ENCRYPT_DECRYPT"
   is_enabled              = true
@@ -80,20 +89,26 @@ resource "aws_kms_key" "timestream_db_key" {
 
 # KMS Alias for easier reference
 resource "aws_kms_alias" "timestream_db_alias" {
+  provider      = aws.timestream
   name          = "alias/TimestreamDatabaseKMSKey-${var.stack_name}"
   target_key_id = aws_kms_key.timestream_db_key.key_id
 }
 
 # Timestream Database
 resource "aws_timestreamwrite_database" "connect_db" {
+  provider      = aws.timestream
   database_name = var.stack_name
   kms_key_id    = aws_kms_key.timestream_db_key.arn
   
-  tags = var.tags
+  tags = {
+    Project = "ConnectAnalytics"
+    Module  = "Timestream"
+  }
 }
 
 # Timestream Tables
 resource "aws_timestreamwrite_table" "agent_event" {
+  provider      = aws.timestream
   database_name = aws_timestreamwrite_database.connect_db.database_name
   table_name    = "AgentEvent"
   
@@ -102,10 +117,15 @@ resource "aws_timestreamwrite_table" "agent_event" {
     magnetic_store_retention_period_in_days = var.timestream_retention_magnetic
   }
   
-  tags = var.tags
+  tags = {
+    Project = "ConnectAnalytics"
+    Module  = "Timestream"
+    Table   = "AgentEvent"
+  }
 }
 
 resource "aws_timestreamwrite_table" "agent_event_contact" {
+  provider      = aws.timestream
   database_name = aws_timestreamwrite_database.connect_db.database_name
   table_name    = "AgentEvent_Contact"
   
@@ -118,6 +138,7 @@ resource "aws_timestreamwrite_table" "agent_event_contact" {
 }
 
 resource "aws_timestreamwrite_table" "contact_event" {
+  provider      = aws.timestream
   database_name = aws_timestreamwrite_database.connect_db.database_name
   table_name    = "ContactEvent"
   
@@ -130,6 +151,7 @@ resource "aws_timestreamwrite_table" "contact_event" {
 }
 
 resource "aws_timestreamwrite_table" "instance" {
+  provider      = aws.timestream
   database_name = aws_timestreamwrite_database.connect_db.database_name
   table_name    = "Instance"
   
@@ -142,6 +164,7 @@ resource "aws_timestreamwrite_table" "instance" {
 }
 
 resource "aws_timestreamwrite_table" "queue" {
+  provider      = aws.timestream
   database_name = aws_timestreamwrite_database.connect_db.database_name
   table_name    = "Queue"
   
@@ -154,6 +177,7 @@ resource "aws_timestreamwrite_table" "queue" {
 }
 
 resource "aws_timestreamwrite_table" "user" {
+  provider      = aws.timestream
   database_name = aws_timestreamwrite_database.connect_db.database_name
   table_name    = "User"
   
@@ -527,7 +551,7 @@ resource "aws_lambda_function" "persist_agent_event" {
   environment {
     variables = {
       TIMESTREAM_DATABASE_NAME = aws_timestreamwrite_database.connect_db.database_name
-      TIMESTREAM_REGION        = var.aws_region
+      TIMESTREAM_REGION        = var.timestream_region
     }
   }
   
@@ -566,7 +590,7 @@ resource "aws_lambda_function" "persist_contact_event" {
   environment {
     variables = {
       TIMESTREAM_DATABASE_NAME = aws_timestreamwrite_database.connect_db.database_name
-      TIMESTREAM_REGION        = var.aws_region
+      TIMESTREAM_REGION        = var.timestream_region
     }
   }
   
@@ -617,7 +641,7 @@ resource "aws_lambda_function" "persist_instance_data" {
   environment {
     variables = {
       TIMESTREAM_DATABASE_NAME = aws_timestreamwrite_database.connect_db.database_name
-      TIMESTREAM_REGION        = var.aws_region
+      TIMESTREAM_REGION        = var.timestream_region
     }
   }
   
